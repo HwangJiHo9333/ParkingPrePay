@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>事前精算｜精算方法選択</title>
+
+<style>
+:root {
+	--bg: #fdf5e6;
+	--panel: #fffaf0;
+	--text: #444;
+	--line: #d8c49b;
+	--accent: #d6b85a;
+	--hover: #f8efd0;
+	--muted: #666;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; }
+body {
+	background: var(--bg);
+	color: var(--text);
+	font-family: 'Noto Sans JP', 'Malgun Gothic', sans-serif;
+	display: flex; flex-direction: column;
+}
+/* 상단바 */
+.topbar {
+	display: flex; justify-content: space-between; align-items: center;
+	padding: 12px 20px; background: var(--panel);
+	border-bottom: 2px solid var(--line);
+}
+.title { font-weight: 800; text-align: center; flex: 1; }
+.actions { display: flex; gap: 10px; }
+.link-btn {
+	border: 2px solid var(--line); border-radius: 10px;
+	background: var(--bg); color: var(--text);
+	font-weight: 700; cursor: pointer; padding: 8px 12px; font-size: 13px;
+}
+.link-btn:hover { background: var(--hover); }
+
+/* 레이아웃 */
+.main-wrap {
+	flex: 1; display: grid; gap: 16px; padding: 16px;
+	grid-template-columns: 1.1fr 0.9fr;
+}
+@media (max-width: 980px) { .main-wrap { grid-template-columns: 1fr; } }
+
+/* 카드 */
+.card {
+	background: var(--panel); border: 2px solid var(--line);
+	border-radius: 12px; padding: 20px;
+	box-shadow: 0 3px 8px rgba(0,0,0,.1);
+}
+
+/* ===== 왼쪽: 서비스 시간 등록 ===== */
+.left-box { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.left-box h2 { margin: 0; text-align: center; }
+.ticket-box {
+	background: #fff; border: 2px dashed var(--line); border-radius: 12px;
+	width: 80%; min-height: 120px;
+	display: flex; align-items: center; justify-content: center;
+	font-size: 18px; color: var(--muted); text-align: center; padding: 12px;
+}
+.ticket-input {
+	font-size: 20px; padding: 10px; width: 80%;
+	border: 2px solid var(--line); border-radius: 8px; text-align: right;
+}
+.input-hint { font-size: 13px; color: var(--muted); }
+
+.k-btn {
+	border: 2px solid var(--line); border-radius: 10px;
+	background: var(--bg); color: var(--text); font-weight: 700;
+	padding: 12px 28px; font-size: 18px; cursor: pointer;
+	transition: background .2s ease, transform .05s ease;
+}
+.k-btn:hover { background: var(--hover); }
+.k-btn:active { transform: translateY(1px); }
+.k-btn--accent { background: var(--accent); color: #fff; }
+.k-btn--accent:hover { background: #caaa45; }
+
+/* ===== 오른쪽: 요금 및 결제수단 ===== */
+.right-box h2 { text-align: center; margin-top: 0; }
+.fee-box {
+	font-size: 18px; line-height: 1.8;
+	border: 2px solid var(--line); border-radius: 12px;
+	background: #fff; padding: 16px;
+}
+.fee-box .row { display: flex; justify-content: space-between; gap: 12px; }
+.fee-box .label { color: var(--muted); }
+.fee-box .value { font-weight: 700; }
+
+.pay-grid {
+	display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 20px;
+}
+.pay-btn {
+	width: 160px; padding: 18px 0; font-size: 20px; font-weight: 700;
+	border: 2px solid var(--line); border-radius: 12px; background: var(--bg);
+	cursor: pointer; transition: background .2s;
+}
+.pay-btn:hover { background: var(--hover); }
+.pay-btn--cash { background: #ffe4b5; }
+.pay-btn--card { background: #e6d690; }
+.pay-btn--receipt { background: #f1deb5; }
+</style>
+</head>
+
+<body>
+	<!-- 상단바 -->
+	<div class="topbar">
+		<div class="actions">
+			<a href="/kiosk/step1" class="link-btn" id="btnHome">🏠 ホーム</a>
+		</div>
+		<div class="title" id="titleText">ご利用料金の精算</div>
+		<div class="actions">
+			<button type="button" class="link-btn" id="btnLang">English</button>
+		</div>
+	</div>
+
+	<!-- 메인 -->
+	<main class="main-wrap">
+		<!-- 왼쪽: 서비스 시간 등록 -->
+		<section class="card left-box">
+			<h2 id="guideText">サービス時間をご登録しますか？</h2>
+
+			<div class="ticket-box" id="ticketBox">
+				利用した店の総金額を入力してください
+			</div>
+
+			<input type="number" inputmode="numeric" class="ticket-input" id="ticketInput"
+				   placeholder="総金額 (¥)" min="0" step="100">
+
+			<div class="input-hint">※1000円ごとに 1時間、残り500円ごとに 30分の無料時間が付与されます。</div>
+
+			<button class="k-btn k-btn--accent" id="btnApply">適用する</button>
+		</section>
+
+		<!-- 오른쪽: 이용요금 -->
+		<section class="card right-box">
+			<h2 id="feeTitle">ご利用料金</h2>
+			<div class="fee-box" id="feeBox">
+				<div class="row">
+					<div class="label">入庫時刻：</div>
+					<div class="value" id="entryTime" th:text="${entryTime}">2025-10-29 13:20</div>
+				</div>
+				<div class="row">
+					<div class="label">利用時間：</div>
+					<div class="value">
+						<span id="useTime" th:text="${useTime}">2時間30分</span>
+						<span id="useMinutes" th:text="${useMinutes}" style="display:none;">150</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="label">無料駐車時間：</div>
+					<div class="value" id="freeTime">0分</div>
+				</div>
+				<div class="row">
+					<div class="label">利用料金：</div>
+					<div class="value" id="totalFee" th:text="${fee}">¥2,000</div>
+				</div>
+			</div>
+
+			<div class="pay-grid">
+				<button class="pay-btn pay-btn--cash" onclick="selectPay('cash')">現金</button>
+				<button class="pay-btn pay-btn--card" onclick="selectPay('card')">カード</button>
+				<button class="pay-btn pay-btn--receipt" onclick="selectPay('receipt')">領収書発行</button>
+			</div>
+		</section>
+	</main>
+
+<script>
+(function(){
+  let lang = localStorage.getItem('kiosk_lang') || 'ja';
+  const bLang   = document.getElementById('btnLang');
+  const bHome   = document.getElementById('btnHome');
+  const tText   = document.getElementById('titleText');
+  const gText   = document.getElementById('guideText');
+  const fTitle  = document.getElementById('feeTitle');
+  const btnApply= document.getElementById('btnApply');
+  const ticketBox  = document.getElementById('ticketBox');
+  const ticketInput= document.getElementById('ticketInput');
+  const totalFeeEl = document.getElementById('totalFee');
+
+  // 초기 요금(문자 → 숫자) 보존
+  const initialFee = (totalFeeEl.textContent || '')
+                      .replace(/[^\d]/g,'')
+                      .trim();
+  const baseFee = initialFee ? parseInt(initialFee) : null;
+
+  const i18n = {
+    ja: {
+      title:"ご利用料金の精算",
+      guide:"サービス時間をご登録しますか？",
+      scan:"利用した店の総金額を入力してください",
+      apply:"適用する",
+      fee:"ご利用料金",
+      home:"ホーム",
+      langToggle:"English",
+      appliedPrefix:"無料サービス時間：",
+      covered:"無料時間が利用時間を超えました。完了画面へ移動します。"
+    },
+    en: {
+      title:"Payment Details",
+      guide:"Would you like to register service time?",
+      scan:"Enter the total amount spent at the shop",
+      apply:"Apply",
+      fee:"Parking Fee",
+      home:"Home",
+      langToggle:"日本語",
+      appliedPrefix:"Free service time: ",
+      covered:"Free time exceeds your stay. Redirecting to finish screen."
+    }
+  };
+
+  function setLang(){
+    const t = i18n[lang];
+    tText.textContent  = t.title;
+    gText.textContent  = t.guide;
+    ticketBox.textContent = t.scan;
+    btnApply.textContent  = t.apply;
+    fTitle.textContent    = t.fee;
+    bHome.textContent     = t.home;
+    bLang.textContent     = t.langToggle;
+  }
+  bLang.onclick = () => { lang = (lang==='ja' ? 'en' : 'ja'); localStorage.setItem('kiosk_lang', lang); setLang(); };
+  setLang();
+
+  // ---- "2時間30分" → 분 단위 파싱 (서버에서 useMinutes 내려주면 그 값을 우선 사용)
+  function parseUseMinutes() {
+    const server = document.getElementById('useMinutes');
+    if (server && server.textContent && !isNaN(parseInt(server.textContent))) {
+      return parseInt(server.textContent);
+    }
+    const txt = document.getElementById('useTime').textContent.trim();
+    let h = 0, m = 0;
+    const hMatch = txt.match(/(\d+)\s*時間/);
+    const mMatch = txt.match(/(\d+)\s*分/);
+    if (hMatch) h = parseInt(hMatch[1]);
+    if (mMatch) m = parseInt(mMatch[1]);
+    if (!hMatch && !mMatch) { // 영문 케이스 대비
+      const h2 = txt.match(/(\d+)\s*h/);
+      const m2 = txt.match(/(\d+)\s*m/);
+      if (h2) h = parseInt(h2[1]);
+      if (m2) m = parseInt(m2[1]);
+    }
+    return h*60 + m;
+  }
+
+  // 분 → "X時間Y分" 문자열
+  function fmtMinutes(min) {
+    if (min <= 0) return (lang==='ja' ? '0分' : '0m');
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    if (lang==='ja') {
+      if (h>0 && m>0) return `${h}時間${m}分`;
+      if (h>0) return `${h}時間`;
+      return `${m}分`;
+    } else {
+      if (h>0 && m>0) return `${h}h ${m}m`;
+      if (h>0) return `${h}h`;
+      return `${m}m`;
+    }
+  }
+
+  // ---- 서비스 시간 계산: 1000円당 60분 + 残り500円당 30分
+  function calcFreeMinutes(amountYen) {
+    const thousands = Math.floor(amountYen / 1000);
+    const remainder = amountYen % 1000;
+    const extra30   = Math.floor(remainder / 500);
+    return thousands * 60 + extra30 * 30;
+  }
+
+  document.getElementById('btnApply').addEventListener('click', () => {
+    // 금액 파싱
+    const raw = (ticketInput.value || '').toString().replace(/[^\d]/g, '');
+    const amount = parseInt(raw || '0');
+    if (isNaN(amount) || amount <= 0) {
+      alert(lang==='ja' ? '総金額(¥)を入力してください。' : 'Please enter total amount (¥).');
+      ticketInput.focus();
+      return;
+    }
+
+    const freeMin = calcFreeMinutes(amount);
+    const useMin  = parseUseMinutes();
+    const billMin = Math.max(0, useMin - freeMin);
+
+    // 좌측 안내 메시지 갱신
+    ticketBox.style.color = "#2e7d32";
+    ticketBox.textContent = `${i18n[lang].appliedPrefix}${fmtMinutes(freeMin)}`;
+
+    // 오른쪽 표시 갱신: 무료 주차시간
+    document.getElementById('freeTime').textContent = fmtMinutes(freeMin);
+
+    // 요금(표시만): 전액 무료일 때만 0으로
+    if (billMin === 0) {
+      if (baseFee !== null) totalFeeEl.textContent = '¥0';
+      setTimeout(() => {
+        alert(i18n[lang].covered);
+        window.location.href = "/kiosk/step5";
+      }, 1200);
+    } else {
+      // 부분 할인인 경우, 실제 요금 로직은 서버 요율 표가 필요하므로 그대로 표시 유지
+      if (baseFee !== null) {
+        totalFeeEl.textContent = `¥${Number(baseFee).toLocaleString()}`;
+      }
+    }
+  });
+})();
+
+function selectPay(method){
+  let msg = "";
+  switch(method){
+    case 'cash': msg="現金を投入してください。"; break;
+    case 'card': msg="カードを挿入またはタップしてください。"; break;
+    case 'receipt': msg="領収書を印刷しています..."; break;
+  }
+  alert(msg);
+  if(method!=='receipt'){
+    setTimeout(()=>window.location.href="/kiosk/step5",1200);
+  }
+}
+</script>
+</body>
+</html>

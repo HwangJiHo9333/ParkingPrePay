@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hwangjiho.parking.mapper.VehicleEntryMapper">
+
+  <resultMap id="CandidateMap" type="com.hwangjiho.parking.dto.Candidate">
+    <id     property="id"       column="ID"/>
+    <result property="plate"    column="PLATE_FULL"/>
+    <result property="entryAt"  column="ENTRY_AT"/>
+    <result property="imageUrl" column="IMAGE_URL"/>
+  </resultMap>
+
+  <!-- 완전 일치 (상위 N건) -->
+  <select id="findByFullPlate" resultMap="CandidateMap">
+    SELECT *
+    FROM (
+      SELECT ID, PLATE_FULL, ENTRY_AT, IMAGE_URL
+      FROM VEHICLE_ENTRY
+      WHERE PLATE_FULL = #{plateFull}
+        AND STATUS = 'IN'
+      ORDER BY ENTRY_AT DESC
+    )
+    WHERE ROWNUM &lt;= #{limit}
+  </select>
+
+  <!-- 마지막 4자리 일치 (상위 N건) -->
+  <select id="findCandidatesByLast4" resultMap="CandidateMap">
+    SELECT *
+    FROM (
+      SELECT ID, PLATE_FULL, ENTRY_AT, IMAGE_URL
+      FROM VEHICLE_ENTRY
+      WHERE PLATE_LAST4 = #{digits}
+        AND STATUS = 'IN'
+      ORDER BY ENTRY_AT DESC
+    )
+    WHERE ROWNUM &lt;= #{limit}
+  </select>
+</mapper>
