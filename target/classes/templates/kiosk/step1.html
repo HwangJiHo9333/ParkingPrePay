@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>事前精算｜ナンバープレート入力</title>
+<style>
+:root {
+	--bg: #fdf5e6; /* 밝은 베이지 */
+	--panel: #fffaf0; /* 카드/패널 */
+	--text: #444; /* 어두운 텍스트 */
+	--line: #d8c49b;
+	--accent: #d6b85a; /* 강조 색상 */
+	--muted: #666;
+	--hover: #f8efd0;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: var(--bg);
+	color: var(--text);
+	font-family: 'Noto Sans JP', 'Malgun Gothic', sans-serif;
+	display: flex;
+	flex-direction: column;
+}
+
+/* 상단바 */
+.topbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 20px;
+	background: var(--panel);
+	border-bottom: 2px solid var(--line);
+}
+
+.title {
+	font-weight: 800;
+	text-align: center;
+	flex: 1;
+}
+
+.actions {
+	display: flex;
+	gap: 10px;
+}
+
+/* 버튼 (홈, English 포함) */
+.link-btn, .btn, .btn-aux {
+	border: 2px solid var(--line);
+	border-radius: 10px;
+	background: var(--bg);
+	color: var(--text);
+	font-weight: 700;
+	cursor: pointer;
+	transition: background .2s ease, transform .05s ease;
+}
+
+.link-btn:hover, .btn:hover, .btn-aux:hover {
+	background: var(--hover);
+}
+
+.link-btn {
+	padding: 8px 12px;
+	font-size: 13px;
+}
+
+.btn {
+	padding: 12px 0;
+	font-size: 26px;
+}
+
+.btn-aux {
+	font-size: 20px;
+	padding: 10px 0;
+}
+
+.btn:active, .btn-aux:active {
+	transform: translateY(1px);
+}
+
+.btn-cancel, .btn-confirm {
+	background: var(--bg);
+}
+
+/* 본문 */
+.wrap {
+	flex: 1;
+	display: grid;
+	gap: 16px;
+	padding: 16px;
+	grid-template-columns: 1.25fr 0.75fr;
+}
+
+@media ( max-width :980px) {
+	.wrap {
+		grid-template-columns: 1fr;
+	}
+}
+
+.card {
+	background: var(--panel);
+	border-radius: 12px;
+	border: 1px solid var(--line);
+	padding: 20px;
+}
+
+/* 번호판 */
+.plate-area {
+	display: grid;
+	gap: 18px;
+	align-items: center;
+	justify-items: center;
+}
+
+.plate-frame {
+	background: #fff;
+	color: #222;
+	width: min(98%, 980px);
+	border: 8px solid var(--line);
+	border-radius: 16px;
+	padding: 22px;
+}
+
+.seg {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.seg label {
+	color: #b91c1c;
+	font-weight: 900;
+}
+
+.select {
+	font-size: 24px;
+	font-weight: 900;
+	border: 2px solid var(--line);
+	border-radius: 10px;
+	background: #fff;
+	color: #222;
+	padding: 6px 10px;
+}
+
+.box {
+	background: #fff;
+	border: 2px solid var(--line);
+	border-radius: 10px;
+	font-weight: 900;
+	font-size: 32px;
+	min-width: 140px;
+	min-height: 64px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.box.focus {
+	outline: 3px solid var(--accent);
+	outline-offset: 2px;
+}
+
+.hint {
+	text-align: center;
+	color: var(--muted);
+	font-size: 13px;
+	margin-top: 8px;
+}
+
+/* 키패드 */
+.keypad {
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	gap: 12px;
+	min-height: 520px;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-auto-rows: 90px;
+	gap: 12px;
+}
+
+.pad-title {
+	text-align: center;
+	font-weight: 700;
+}
+</style>
+</head>
+<body>
+	<!-- 상단바 -->
+	<div class="topbar">
+		<div class="actions">
+			<a href="/kiosk/step1" class="link-btn" id="btnHome">🏠 ホーム</a>
+		</div>
+		<div class="title" id="titleText">ナンバープレートを入力してください。</div>
+		<div class="actions">
+			<button type="button" class="link-btn" id="btnLang">English</button>
+		</div>
+	</div>
+
+	<!-- 본문 -->
+	<main class="wrap">
+		<!-- 왼쪽 번호판 -->
+		<section class="card plate-area">
+			<div class="plate-frame">
+				<div class="seg">
+					<label>①</label> <select id="regionSelect" class="select">
+						<option>品川</option>
+						<option>横浜</option>
+						<option>大宮</option>
+						<option>足立</option>
+						<option>多摩</option>
+					</select> <label>②</label>
+					<div id="classBox" class="box">___</div>
+				</div>
+				<div class="seg" style="margin-top: 12px;">
+					<label>③</label> <select id="kanaSelect" class="select"
+						style="min-width: 100px;">
+						<option>あ</option>
+						<option>い</option>
+						<option>う</option>
+						<option>え</option>
+						<option>お</option>
+					</select> <label>④</label>
+					<div id="serialBox" class="box" style="min-width: 200px;">__-__</div>
+				</div>
+			</div>
+			<div class="hint" id="leftHint">テンキーは②(3桁) →
+				④(4桁)の順に入力します。（取消＝全消去）</div>
+		</section>
+
+		<!-- 오른쪽 키패드 -->
+		<aside class="card keypad">
+			<div class="pad-title" id="padTitle">テンキー</div>
+			<div class="grid">
+				<button class="btn" data-digit="1">1</button>
+				<button class="btn" data-digit="2">2</button>
+				<button class="btn" data-digit="3">3</button>
+				<button class="btn" data-digit="4">4</button>
+				<button class="btn" data-digit="5">5</button>
+				<button class="btn" data-digit="6">6</button>
+				<button class="btn" data-digit="7">7</button>
+				<button class="btn" data-digit="8">8</button>
+				<button class="btn" data-digit="9">9</button>
+				<div></div>
+				<button class="btn" data-digit="0">0</button>
+				<div></div>
+			</div>
+
+			<div class="grid">
+				<button id="btnCancel" class="btn-aux btn-cancel">取消</button>
+				<div></div>
+				<button id="btnConfirm" class="btn-aux btn-confirm" disabled>確定</button>
+			</div>
+			<div class="hint" id="padHint">※「0」ボタンも使用できます。両方の欄を埋めると確定できます。</div>
+		</aside>
+	</main>
+
+	<form id="nextForm" action="/kiosk/step2" method="get"
+		style="display: none">
+		<input type="hidden" name="plate" id="plateValue">
+	</form>
+
+	<script>
+(function(){
+  let active='class', c3='', s4='', lang=localStorage.getItem('kiosk_lang')||'ja';
+  const cBox=document.getElementById('classBox'), sBox=document.getElementById('serialBox');
+  const region=document.getElementById('regionSelect'), kana=document.getElementById('kanaSelect');
+  const btnC=document.getElementById('btnCancel'), btnF=document.getElementById('btnConfirm');
+  const form=document.getElementById('nextForm'), val=document.getElementById('plateValue');
+  const tText=document.getElementById('titleText'), pTitle=document.getElementById('padTitle');
+  const pHint=document.getElementById('padHint'), lHint=document.getElementById('leftHint');
+  const bLang=document.getElementById('btnLang'), bHome=document.getElementById('btnHome');
+
+  const i18n={
+    ja:{title:"ナンバープレートを入力してください。",padTitle:"テンキー",padHint:"※「0」ボタンも使用できます。両方の欄を埋めると確定できます。",
+      leftHint:"テンキーは②(3桁) → ④(4桁)の順に入力します。（取消＝全消去）",cancel:"取消",confirm:"確定",home:"ホーム",langToggle:"English",
+      alert:"分類番号(3桁)と一連番号(4桁)を入力してください。"},
+    en:{title:"Please enter your license plate number.",padTitle:"Number Pad",padHint:"※ '0' is available. You can confirm when both fields are complete.",
+      leftHint:"Enter ② (3 digits) then ④ (4 digits). (Cancel = Clear all)",cancel:"Clear",confirm:"Confirm",home:"Home",langToggle:"日本語",
+      alert:"Please enter Class No. (3 digits) and Serial (4 digits)."}
+  };
+  function setLang(){
+    const t=i18n[lang];
+    tText.textContent=t.title; pTitle.textContent=t.padTitle;
+    pHint.textContent=t.padHint; lHint.textContent=t.leftHint;
+    btnC.textContent=t.cancel; btnF.textContent=t.confirm;
+    bHome.textContent=t.home; bLang.textContent=t.langToggle;
+  }
+  bLang.onclick=()=>{ lang=(lang==='ja'?'en':'ja'); localStorage.setItem('kiosk_lang',lang); setLang(); };
+
+  const fC=()=> (c3+"___").slice(0,3).replace(/ /g,'_');
+  const fS=()=>{const d=(s4+"____").slice(0,4);return d.slice(0,2).replace(/ /g,'_')+"-"+d.slice(2).replace(/ /g,'_');};
+  const update=()=>{cBox.textContent=fC(); sBox.textContent=fS(); cBox.classList.toggle('focus',active==='class');
+    sBox.classList.toggle('focus',active==='serial'); btnF.disabled=!(c3.length===3&&s4.length===4);}
+  const add=n=>{ if(active==='class'){if(c3.length<3){c3+=n;if(c3.length===3)active='serial';}}
+    else if(s4.length<4){s4+=n;} update(); }
+  const clear=()=>{c3='';s4='';active='class';update();}
+
+  document.querySelectorAll('[data-digit]').forEach(b=>b.onclick=()=>add(b.getAttribute('data-digit')));
+  btnC.onclick=clear;
+  btnF.onclick=()=>{if(!(c3.length===3&&s4.length===4)){alert(i18n[lang].alert);return;}
+    val.value=`${region.value} ${fC()} ${kana.value} ${fS()}`;form.submit();}
+  setLang(); update();
+})();
+</script>
+</body>
+</html>
