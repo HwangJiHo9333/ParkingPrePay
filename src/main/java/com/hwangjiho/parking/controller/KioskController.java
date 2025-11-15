@@ -7,6 +7,9 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.hwangjiho.parking.domain.ParkingFeeInfo;
 import com.hwangjiho.parking.dto.Candidate;
@@ -21,38 +24,41 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
+@SessionAttributes("lastPlate")
 public class KioskController {
 
-	private final KioskService kioskService; // STEP1/2 후보 + PENDING/PAID
-	private final ParkingFeeService parkingFeeService; // 입출차/시간/요금 누적 테이블
-	private final TariffService tariffService; // 요금 계산
-	private final VehicleEntryMapper vehicleEntryMapper; // 번호판 조회
+	private final KioskService kioskService;
+	private final ParkingFeeService parkingFeeService;
+	private final TariffService tariffService;
+	private final VehicleEntryMapper vehicleEntryMapper;
 
-	/* 루트 → step1 */
 	@GetMapping({ "/", "/index" })
 	public String index() {
 		return "redirect:/kiosk/step1";
 	}
 
-	/* STEP1 */
 	@GetMapping("/kiosk/step1")
-	public String step1() {
+	public String step1(SessionStatus status) {
+		status.setComplete();
 		return "kiosk/step1";
 	}
 
-	/* STEP2: 후보 차량 리스트 */
 	@GetMapping("/kiosk/step2")
 	public String step2(@RequestParam String plate, Model model) {
 		List<Candidate> candidates = kioskService.getCandidates(plate, 4);
 		model.addAttribute("plate", plate);
 		model.addAttribute("candidates", candidates);
+		model.addAttribute("lastPlate", plate);
 		return "kiosk/step2";
 	}
 
-	/* STEP3: 차량 확정 → 출차시간/이용시간 갱신 & 미리보기 */
+	@GetMapping("/kiosk/interphone")
+	public String interphone() {
+		return "kiosk/interphone";
+	}
+
 	@GetMapping("/kiosk/step3")
 	public String step3(@RequestParam("carId") Long carId, Model model) {
-		// 없으면 입고행 생성, 미정산 건에 출차/이용 갱신
 		parkingFeeService.ensureEntryRowIfAbsent(carId);
 		parkingFeeService.updateExitAndUseMinutes(carId);
 
@@ -66,7 +72,6 @@ public class KioskController {
 		String exitStr = toYmdHm(row.getExitAt());
 		int useMin = nz(row.getUseMinutes());
 		String useStr = formatUseTime(useMin);
-
 		int baseFee = tariffService.calculateFee(useMin);
 
 		model.addAttribute("carId", carId);
@@ -78,40 +83,82 @@ public class KioskController {
 		return "kiosk/step3";
 	}
 
-	/* STEP3 → STEP4: 결제수단 화면 (PENDING 저장) */
+	/* ---------- PRG: POST → REDIRECT → GET ---------- */
+
+	/** POST: step3에서 계산한 내용을 저장하고 step4로 리다이렉트 */
 	@PostMapping("/kiosk/step4")
-	public String postStep4(FeeForm form, Model model) {
-		ParkingFeeInfo saved = kioskService.savePendingFee(form); // PENDING insert
-		ParkingFeeRow row = parkingFeeService.getLatestOpenOrLastRow(saved.getVehicleId());
+	public String postStep4(FeeForm form, RedirectAttributes ra) {
+		ParkingFeeInfo saved = kioskService.savePendingFee(form); // PENDING 저장
+		// 출차/이용 최신화(표시 반영)
+		parkingFeeService.updateExitAndUseMinutes(saved.getVehicleId());
 
-		model.addAttribute("fee", saved);
-		model.addAttribute("carId", saved.getVehicleId());
-		model.addAttribute("paymentMethod", saved.getPaymentMethod());
+		// tx(id) + 선택 결제수단을 쿼리스트링으로 넘김
+		ra.addAttribute("tx", saved.getFeeId()); // 복구키
+		ra.addAttribute("method", form.getPaymentMethod()); // 'cash' / 'card'
 
-		model.addAttribute("entryTime", toYmdHm(saved.getEntryAt()));
+		return "redirect:/kiosk/step4";
+	}
+
+	/** GET: 복구용 step4. tx(권장) 또는 carId로 화면 데이터를 채움 */
+	@GetMapping("/kiosk/step4")
+	public String getStep4(@RequestParam(required = false) Long tx, @RequestParam(required = false) Long carId,
+			@RequestParam(required = false, name = "method") String method, Model model) {
+
+		ParkingFeeInfo fee;
+		if (tx != null) {
+			fee = kioskService.findPendingById(tx);
+			if (fee != null)
+				carId = fee.getVehicleId();
+		} else {
+			fee = kioskService.findLatestPendingByCarId(carId);
+		}
+		if (carId == null) {
+			model.addAttribute("error", "不正なアクセスです。");
+			return "kiosk/step1";
+		}
+
+		parkingFeeService.updateExitAndUseMinutes(carId);
+		ParkingFeeRow row = parkingFeeService.getLatestOpenOrLastRow(carId);
+
+		// ★ 결제수단 결정: 쿼리파라미터 > DB > 기본값 cash
+		String paymentMethod = (method != null && !method.isBlank()) ? method
+				: (fee != null && fee.getPaymentMethod() != null ? fee.getPaymentMethod() : "cash");
+
+		model.addAttribute("carId", carId);
+		model.addAttribute("paymentMethod", paymentMethod);
+
+		model.addAttribute("entryTime",
+				toYmdHm(row != null ? row.getEntryAt() : (fee != null ? fee.getEntryAt() : null)));
 		model.addAttribute("exitTime", toYmdHm(row != null ? row.getExitAt() : null));
 
-		int useMin = (row != null && row.getUseMinutes() != null) ? row.getUseMinutes() : nz(saved.getUseMinutes());
-		int freeMin = nz(saved.getFreeMinutes());
+		int useMin = (row != null && row.getUseMinutes() != null) ? row.getUseMinutes()
+				: (fee != null && fee.getUseMinutes() != null ? fee.getUseMinutes() : 0);
+		int freeMin = (fee != null && fee.getFreeMinutes() != null) ? fee.getFreeMinutes() : 0;
+
 		model.addAttribute("useMinutes", useMin);
 		model.addAttribute("useTime", formatUseTime(useMin));
 		model.addAttribute("freeMinutes", freeMin);
 		model.addAttribute("freeTime", formatUseTime(freeMin));
 
 		Integer rowTotal = (row != null ? row.getTotalFee() : null);
-		int totalFee = (rowTotal != null) ? rowTotal : nz(saved.getFinalFeeYen());
+		int totalFee = (rowTotal != null) ? rowTotal
+				: (fee != null && fee.getFinalFeeYen() != null ? fee.getFinalFeeYen() : 0);
 		model.addAttribute("totalFee", totalFee);
+
+		if (tx != null)
+			model.addAttribute("tx", tx); // step5에서 뒤로가기용
 
 		return "kiosk/step4";
 	}
 
-	/* STEP4 → STEP5 : 결제 완료(현금/카드) */
-	@PostMapping("/kiosk/step4/complete")
-	public String step4Complete(@RequestParam("carId") Long carId, @RequestParam("paymentMethod") String paymentMethod,
-			Model model) {
-		// 결제 직전 시각으로 출차/이용 최신화
-		parkingFeeService.updateExitAndUseMinutes(carId);
+	/* step5 : 무료 직행/결제 완료 공통 진입 */
+	@PostMapping("/kiosk/step5")
+	public String step5(@RequestParam Long carId, @RequestParam(required = false) Integer amountYen,
+			@RequestParam(required = false, defaultValue = "receipt") String paymentMethod,
+			@RequestParam(required = false) Integer tenderedYen, @RequestParam(required = false) Integer changeYen,
+			@RequestParam(required = false) Long tx, Model model) {
 
+		parkingFeeService.updateExitAndUseMinutes(carId);
 		ParkingFeeRow row = parkingFeeService.getLatestOpenOrLastRow(carId);
 		if (row == null) {
 			model.addAttribute("error", "対象の車両データが見つかりません。最初からやり直してください。");
@@ -119,10 +166,11 @@ public class KioskController {
 		}
 
 		String plate = safeStr(vehicleEntryMapper.findPlateById(carId));
-
 		int useMin = nz(row.getUseMinutes());
 		int freeMin = nz(row.getFreeMinutes());
-		int totalFee = nz(row.getTotalFee());
+		int dbTotal = nz(row.getTotalFee());
+
+		int paidAmount = (amountYen != null ? amountYen : dbTotal);
 
 		model.addAttribute("carId", carId);
 		model.addAttribute("plate", plate);
@@ -132,39 +180,16 @@ public class KioskController {
 		model.addAttribute("useTime", formatUseTime(useMin));
 		model.addAttribute("freeMinutes", freeMin);
 		model.addAttribute("freeTime", formatUseTime(freeMin));
-		model.addAttribute("totalFee", totalFee);
 
-		return "kiosk/step5";
-	}
+		model.addAttribute("totalFee", dbTotal);
+		model.addAttribute("paidAmount", paidAmount);
 
-	/* STEP3 → STEP5 : 전액 무료/직접 이동 */
-	@PostMapping("/kiosk/step5")
-	public String step5(@RequestParam Long carId, @RequestParam(required = false) Integer amountYen, // 참고용
-			@RequestParam(required = false, defaultValue = "receipt") String paymentMethod, Model model) {
-		// 영수증 직전 시각 반영
-		parkingFeeService.updateExitAndUseMinutes(carId);
-
-		ParkingFeeRow row = parkingFeeService.getLatestOpenOrLastRow(carId);
-		if (row == null) {
-			model.addAttribute("error", "対象の車両データが見つかりません。最初からやり直してください。");
-			return "kiosk/step1";
-		}
-
-		String plate = safeStr(vehicleEntryMapper.findPlateById(carId));
-
-		int useMin = nz(row.getUseMinutes());
-		int freeMin = nz(row.getFreeMinutes());
-		int totalFee = nz(row.getTotalFee());
-
-		model.addAttribute("carId", carId);
-		model.addAttribute("plate", plate);
-		model.addAttribute("paymentMethod", paymentMethod); // 'cash' / 'card' / 'receipt'
-		model.addAttribute("entryTime", toYmdHm(row.getEntryAt()));
-		model.addAttribute("exitTime", toYmdHm(row.getExitAt()));
-		model.addAttribute("useTime", formatUseTime(useMin));
-		model.addAttribute("freeMinutes", freeMin);
-		model.addAttribute("freeTime", formatUseTime(freeMin));
-		model.addAttribute("totalFee", totalFee);
+		if (tenderedYen != null)
+			model.addAttribute("tenderedYen", tenderedYen);
+		if (changeYen != null)
+			model.addAttribute("changeYen", changeYen);
+		if (tx != null)
+			model.addAttribute("tx", tx);
 
 		return "kiosk/step5";
 	}
@@ -177,8 +202,7 @@ public class KioskController {
 	}
 
 	private static String formatUseTime(int minutes) {
-		int h = minutes / 60;
-		int m = minutes % 60;
+		int h = minutes / 60, m = minutes % 60;
 		if (h > 0 && m > 0)
 			return h + "時間" + m + "分";
 		if (h > 0)

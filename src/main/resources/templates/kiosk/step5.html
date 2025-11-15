@@ -14,6 +14,7 @@
 	--accent: #d6b85a;
 	--hover: #f8efd0;
 	--muted: #666;
+	--ok: #2e7d32;
 }
 
 * {
@@ -34,150 +35,187 @@ body {
 	flex-direction: column;
 }
 
-/* 상단바 */
+/* Topbar */
 .topbar {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 12px 20px;
+	padding: 14px 22px;
 	background: var(--panel);
 	border-bottom: 2px solid var(--line);
 }
 
-.title {
-	font-weight: 800;
-	text-align: center;
-	flex: 1;
-}
-
 .actions {
 	display: flex;
-	gap: 10px;
-}
-
-.link-btn, .k-btn {
-	border: 2px solid var(--line);
-	border-radius: 10px;
-	background: var(--bg);
-	color: var(--text);
-	font-weight: 700;
-	cursor: pointer;
-	transition: background .2s ease, transform .05s ease;
-	text-decoration: none;
-}
-
-.link-btn:hover, .k-btn:hover {
-	background: var(--hover);
+	gap: 12px;
+	align-items: center;
 }
 
 .link-btn {
-	padding: 8px 12px;
-	font-size: 13px;
+	border: 2px solid var(--line);
+	border-radius: 12px;
+	background: var(--bg);
+	color: inherit;
+	text-decoration: none;
+	font-weight: 800;
+	cursor: pointer;
+	padding: 10px 16px;
+	font-size: 16px;
 }
 
-.k-btn {
-	padding: 12px 28px;
-	font-size: 18px;
+.link-btn:hover {
+	background: var(--hover);
 }
 
-.k-btn:active {
-	transform: translateY(1px);
+.title {
+	font-weight: 900;
+	font-size: clamp(18px, 2.2vw, 22px);
 }
 
-.k-btn--accent {
-	background: var(--accent);
-	color: #fff;
-}
-
-.k-btn--accent:hover {
-	background: #caaa45;
-}
-
-/* 레이아웃 */
+/* Layout */
 .main-wrap {
 	flex: 1;
 	display: grid;
-	gap: 16px;
-	padding: 16px;
+	gap: 18px;
+	padding: 18px;
 	grid-template-columns: 1fr 1fr;
+	align-items: stretch;
 }
 
-@media ( max-width :980px) {
+@media ( max-width : 980px) {
 	.main-wrap {
 		grid-template-columns: 1fr;
 	}
 }
 
+/* Cards */
 .card {
 	background: var(--panel);
 	border: 2px solid var(--line);
-	border-radius: 12px;
-	padding: 20px;
-	box-shadow: 0 3px 8px rgba(0, 0, 0, .1);
-}
-
-/* 왼쪽 - 완료 메시지 */
-.left-box {
+	border-radius: 16px;
+	padding: 22px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	text-align: center;
-	gap: 20px;
+	min-height: 0;
 }
 
-.left-box h2 {
+/* Left */
+.left-box {
+	align-items: center;
+	justify-content: center;
+	gap: 18px;
+	text-align: center;
+}
+
+.left-box h1 {
 	margin: 0;
-	font-size: 28px;
-	color: #2e7d32;
+	color: var(--ok);
+	font-weight: 900;
+	letter-spacing: .02em;
+	font-size: clamp(26px, 3.2vw, 40px);
 }
 
 .left-box p {
-	font-size: 18px;
+	margin: 0;
 	color: var(--muted);
+	line-height: 1.6;
+	font-size: clamp(16px, 2vw, 20px);
 }
 
-/* 오른쪽 - 영수증 */
+/* Right / Receipt */
 .right-box {
-	display: flex;
-	flex-direction: column;
 	align-items: center;
-	justify-content: center;
-	gap: 20px;
+	gap: 18px;
+}
+
+.right-box h2 {
+	margin: 0;
+	font-weight: 900;
+	text-align: center;
+	font-size: clamp(20px, 2.4vw, 26px);
+}
+
+.k-btn {
+	border: 2px solid var(--line);
+	border-radius: 12px;
+	background: var(--accent);
+	color: #fff;
+	font-weight: 900;
+	cursor: pointer;
+	padding: 14px 18px;
+	font-size: clamp(18px, 2.2vw, 22px);
+	width: 100%;
+}
+
+.k-btn:hover {
+	background: #caaa45;
 }
 
 .receipt {
-	width: 300px;
+	width: min(96%, 560px);
 	background: #fff;
 	border: 2px solid var(--line);
-	border-radius: 8px;
-	padding: 16px;
-	text-align: left;
+	border-radius: 12px;
+	padding: 18px 20px;
 	display: none;
+	font-size: clamp(14px, 1.9vw, 18px);
+	line-height: 1.7;
 }
 
 .receipt h3 {
+	margin: 0 0 12px 0;
 	text-align: center;
-	margin: 0 0 10px 0;
+	font-size: clamp(18px, 2.2vw, 22px);
 }
 
 .receipt hr {
 	border: none;
 	border-top: 1px dashed var(--line);
+	margin: 10px 0;
 }
 
 .receipt p {
-	margin: 4px 0;
-	font-size: 14px;
+	margin: 6px 0;
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.receipt p b {
+	font-weight: 900;
+}
+
+@media print {
+	.topbar, #btnReceipt {
+		display: none;
+	}
+	.receipt {
+		display: block !important;
+		width: 100%;
+		border: none;
+	}
 }
 </style>
 </head>
-
 <body>
 	<!-- 상단바 -->
 	<div class="topbar">
 		<div class="actions">
 			<a href="/kiosk/step1" class="link-btn" id="btnHome">🏠 ホーム</a>
+
+			<!--
+              ★ 뒤로가기 분기 로직
+
+              - tx != null  : 유료 흐름(step4 → step5)
+                             → 다시 step4로 (tx로 복구)
+              - tx == null  : 무료 흐름(step3 → step5)
+                             → 다시 step3로
+            -->
+			<a class="link-btn" th:if="${tx != null}"
+				th:href="@{/kiosk/step4(tx=${tx})}" id="btnBackStep4">← 戻る</a> <a
+				class="link-btn" th:if="${tx == null}"
+				th:href="@{/kiosk/step3(carId=${carId})}" id="btnBackStep3">← 戻る</a>
 		</div>
 		<div class="title" id="titleText">精算完了</div>
 		<div class="actions">
@@ -185,113 +223,146 @@ body {
 		</div>
 	</div>
 
-	<!-- 메인 -->
+	<!-- 본문 -->
 	<main class="main-wrap">
-		<!-- 왼쪽 -->
 		<section class="card left-box">
-			<h2 id="msgTitle">精算が完了しました。</h2>
+			<h1 id="msgTitle">精算が完了しました。</h1>
 			<p id="msgText">ご利用ありがとうございました。バーが開きましたら安全にご出庫ください。</p>
-			<p style="font-size: 14px;">(Please exit safely when the gate
-				opens.)</p>
 		</section>
 
-		<!-- 오른쪽 -->
 		<section class="card right-box">
 			<h2 id="receiptTitle">領収書の発行</h2>
-			<button class="k-btn k-btn--accent" id="btnReceipt">領収書を表示</button>
+			<button class="k-btn" id="btnReceipt">領収書を表示</button>
 
 			<div class="receipt" id="receiptBox">
-				<h3>領収書 (RECEIPT)</h3>
+				<h3 id="rHeader">領収書 (RECEIPT)</h3>
 				<hr />
 				<p>
-					日付: <span id="rDate"></span>
-				</p>
-
-				<!-- 차량번호 -->
-				<p>
-					ナンバー: <span id="rPlate" th:text="${plate}">—</span>
-				</p>
-
-				<p>
-					入庫時刻: <span id="rEntry" th:text="${entryTime}">—</span>
+					<span>日付</span><span id="rDate"></span>
 				</p>
 				<p>
-					出庫時刻: <span id="rExit" th:text="${exitTime}">—</span>
+					<span>ナンバー</span><span id="rPlate" th:text="${plate}">—</span>
 				</p>
 				<p>
-					利用時間: <span id="rDuration" th:text="${useTime}">—</span>
+					<span>入庫時刻</span><span id="rEntry" th:text="${entryTime}">—</span>
+				</p>
+				<p>
+					<span>出庫時刻</span><span id="rExit" th:text="${exitTime}">—</span>
+				</p>
+				<p>
+					<span>利用時間</span><span id="rDuration" th:text="${useTime}">—</span>
 				</p>
 				<hr />
-
-				<!-- 요금: totalFee 사용 -->
+				<!-- ★ 결제 표시: paidAmount 우선, 없으면 totalFee -->
 				<p>
-					駐車料金: <b><span id="rFee"
-						th:text="${#numbers.formatInteger(totalFee,0)}">0</span></b> 円
+					<span>駐車料金</span> <span> <b id="rFee"
+						th:text="${#numbers.formatInteger((paidAmount != null ? paidAmount : totalFee), 0)}">0</b>
+						円
+					</span>
 				</p>
 
-				<!-- 지불방법 -->
-				<p>
-					お支払い方法: <span id="rMethod"
-						th:text="${paymentMethod} == 'cash' ? '現金' :
-                         (${paymentMethod} == 'card' ? 'カード' : '領収書')">—</span>
+				<!-- ★ 지불방법: 유료(tx != null)일 때만 표시 -->
+				<p th:if="${tx != null}">
+					<span>お支払い方法</span> <span id="rMethod"
+						th:text="${paymentMethod} == 'cash' ? '現金' : (${paymentMethod} == 'card' ? 'カード' : '領収書')">—</span>
 				</p>
+
 				<hr />
-				<p style="text-align: center;">ご利用ありがとうございました</p>
+				<p style="justify-content: center" id="thanks">ご利用ありがとうございました</p>
 			</div>
 		</section>
 	</main>
 
 	<script>
   (function(){
+    // 언어
     let lang = localStorage.getItem('kiosk_lang') || 'ja';
     const i18n = {
-      ja:{ title:"精算完了", home:"ホーム", lang:"English",
-           msgTitle:"精算が完了しました。", msgText:"ご利用ありがとうございました。バーが開きましたら安全にご出庫ください。",
-           receiptTitle:"領収書の発行", show:"領収書を表示", hide:"領収書を閉じる",
-           thanks:"ご利用ありがとうございました" },
-      en:{ title:"Payment Complete", home:"Home", lang:"日本語",
-           msgTitle:"Payment has been completed.", msgText:"Thank you for using our service. Please exit safely when the gate opens.",
-           receiptTitle:"Receipt Issuance", show:"Show Receipt", hide:"Hide Receipt",
-           thanks:"Thank you for your visit." }
+      ja:{
+        title:"精算完了",home:"ホーム",back:"← 戻る",lang:"English",
+        msgTitle:"精算が完了しました。",msgText:"ご利用ありがとうございました。バーが開きましたら安全にご出庫ください。",
+        receiptTitle:"領収書の発行",show:"領収書を表示",hide:"領収書を閉じる",
+        rHeader:"領収書 (RECEIPT)",date:"日付",plate:"ナンバー",entry:"入庫時刻",exit:"出庫時刻",duration:"利用時間",
+        fee:"駐車料金",method:"お支払い方法",cash:"現金",card:"カード",receipt:"領収書",thanks:"ご利用ありがとうございました"
+      },
+      en:{
+        title:"Payment Complete",home:"Home",back:"← Back",lang:"日本語",
+        msgTitle:"Payment has been completed.",msgText:"Thank you for using our service. Please exit safely when the gate opens.",
+        receiptTitle:"Receipt",show:"Show Receipt",hide:"Hide Receipt",
+        rHeader:"RECEIPT",date:"Date",plate:"Plate",entry:"Entry Time",exit:"Exit Time",duration:"Duration",
+        fee:"Parking Fee",method:"Payment Method",cash:"Cash",card:"Card",receipt:"Receipt",thanks:"Thank you for your visit."
+      }
     };
 
-    const btnLang = document.getElementById('btnLang');
-    const btnHome = document.getElementById('btnHome');
-    const titleText = document.getElementById('titleText');
-    const msgTitle = document.getElementById('msgTitle');
-    const msgText  = document.getElementById('msgText');
-    const receiptTitle = document.getElementById('receiptTitle');
-    const btnReceipt = document.getElementById('btnReceipt');
-    const receiptBox = document.getElementById('receiptBox');
+    const btnLang=document.getElementById('btnLang');
+    const btnHome=document.getElementById('btnHome');
+    const titleText=document.getElementById('titleText');
+    const msgTitle=document.getElementById('msgTitle');
+    const msgText=document.getElementById('msgText');
+    const receiptTitle=document.getElementById('receiptTitle');
+    const btnReceipt=document.getElementById('btnReceipt');
+    const receiptBox=document.getElementById('receiptBox');
+    const rHeader=document.getElementById('rHeader');
+    const rDate=document.getElementById('rDate');
+    const thanks=document.getElementById('thanks');
+
+    function setLabel(p, text){
+      if(!p) return;
+      const s=p.querySelector('span:first-child');
+      if(s) s.textContent=text;
+    }
 
     function applyLang(){
-      const t = i18n[lang];
-      titleText.textContent = t.title;
-      btnHome.textContent = "🏠 " + t.home;
-      btnLang.textContent = t.lang;
-      msgTitle.textContent = t.msgTitle;
-      msgText.textContent  = t.msgText;
-      receiptTitle.textContent = t.receiptTitle;
-      btnReceipt.textContent = t.show;
-      // 마지막 줄(감사 인사) 교체
-      const lastP = receiptBox.querySelector("p:last-child");
-      if (lastP) lastP.textContent = t.thanks;
+      const t=i18n[lang];
+      titleText.textContent=t.title;
+      btnHome.textContent="🏠 "+t.home;
+      btnLang.textContent=t.lang;
+      msgTitle.textContent=t.msgTitle;
+      msgText.textContent=t.msgText;
+      receiptTitle.textContent=t.receiptTitle;
+      btnReceipt.textContent = (receiptBox.style.display==='block') ? t.hide : t.show;
+      rHeader.textContent=t.rHeader;
+
+      setLabel(rDate.parentElement,t.date);
+      setLabel(document.getElementById('rPlate').parentElement,t.plate);
+      setLabel(document.getElementById('rEntry').parentElement,t.entry);
+      setLabel(document.getElementById('rExit').parentElement,t.exit);
+      setLabel(document.getElementById('rDuration').parentElement,t.duration);
+      setLabel(document.getElementById('rFee').parentElement.parentElement,t.fee);
+
+      // rMethod는 유료(tx != null)일 때만 존재하므로 null 체크
+      const rMethodEl = document.getElementById('rMethod');
+      if(rMethodEl){
+        setLabel(rMethodEl.parentElement,t.method);
+        const raw=rMethodEl.textContent.trim().toLowerCase();
+        if(raw.includes('cash')||raw==='現金') rMethodEl.textContent=t.cash;
+        else if(raw.includes('card')||raw==='カード') rMethodEl.textContent=t.card;
+        else rMethodEl.textContent=t.receipt; // 그 외는 영수증 표기
+      }
+
+      thanks.textContent=t.thanks;
     }
-    btnLang.onclick = () => { lang = (lang==='ja' ? 'en' : 'ja'); localStorage.setItem('kiosk_lang', lang); applyLang(); };
-    applyLang();
 
-    // 날짜 표시
-    const now = new Date();
-    document.getElementById('rDate').textContent =
-      now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0') +
-      " " + String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
+    btnLang.onclick=()=>{
+      lang=(lang==='ja'?'en':'ja');
+      localStorage.setItem('kiosk_lang',lang);
+      applyLang();
+    };
 
-    // 영수증 표시 토글
-    btnReceipt.addEventListener('click', ()=>{
-      const visible = receiptBox.style.display === 'block';
+    // 날짜
+    const now=new Date();
+    rDate.textContent =
+      now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,'0')+"-"+String(now.getDate()).padStart(2,'0')+" "+
+      String(now.getHours()).padStart(2,'0')+":"+String(now.getMinutes()).padStart(2,'0');
+
+    // 영수증 토글
+    btnReceipt.addEventListener('click',()=>{
+      const visible = receiptBox.style.display==='block';
       receiptBox.style.display = visible ? 'none' : 'block';
       btnReceipt.textContent = visible ? i18n[lang].show : i18n[lang].hide;
     });
+
+    applyLang();
   })();
   </script>
 </body>

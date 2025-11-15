@@ -2,47 +2,66 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hwangjiho.parking.mapper.ParkingFeeInfoMapper">
+<mapper
+	namespace="com.hwangjiho.parking.mapper.ParkingFeeInfoMapper">
 
-  <!-- PK 시퀀스: SEQ_PARKING_FEE 사용 -->
-  <insert id="insertPending" parameterType="com.hwangjiho.parking.domain.ParkingFeeInfo">
-    <selectKey keyProperty="feeId" order="BEFORE" resultType="long">
-      SELECT SEQ_PARKING_FEE.NEXTVAL FROM DUAL
-    </selectKey>
-    INSERT INTO PARKING_FEE_INFO (
-      FEE_ID, VEHICLE_ID, ENTRY_AT,
-      USE_MINUTES, FREE_MINUTES, TOTAL_FEE
-    ) VALUES (
-      #{feeId},
-      #{vehicleId},
-      #{entryAt},
-      #{useMinutes},          -- 도메인 필드명 그대로 사용
-      #{freeMinutes},         -- 도메인 필드명 그대로 사용
-      #{finalFeeYen}          -- 도메인 필드(finalFeeYen)를 TOTAL_FEE에 매핑
-    )
-  </insert>
+	<resultMap id="ParkingFeeInfoMap"
+		type="com.hwangjiho.parking.domain.ParkingFeeInfo">
+		<id property="feeId" column="FEE_ID" />
+		<result property="vehicleId" column="VEHICLE_ID" />
+		<result property="entryAt" column="ENTRY_AT" />
+		<result property="exitAt" column="EXIT_AT" />
+		<result property="useMinutes" column="USE_MINUTES" />
+		<result property="freeMinutes" column="FREE_MINUTES" />
+		<result property="finalFeeYen" column="TOTAL_FEE" />
+	</resultMap>
 
-  <!-- 현재 테이블에 STATUS/TXN_ID/UPDATED_AT가 없으므로 markPaid는 일단 생략하거나, 호출하지 않게 처리하세요.
-  <update id="markPaid">
-    UPDATE PARKING_FEE_INFO
-    SET STATUS = 'PAID',
-        TXN_ID = #{txnId}
-    WHERE FEE_ID = #{feeId}
-  </update>
-  -->
+	<!-- Oracle 11g: selectKey + 시퀀스, TIMESTAMP 명시 -->
+	<insert id="insertPending"
+		parameterType="com.hwangjiho.parking.domain.ParkingFeeInfo">
+		<selectKey keyProperty="feeId" order="BEFORE"
+			resultType="long">
+			SELECT SEQ_PARKING_FEE.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO PARKING_FEE_INFO (
+		FEE_ID, VEHICLE_ID, ENTRY_AT, EXIT_AT,
+		USE_MINUTES, FREE_MINUTES, TOTAL_FEE
+		) VALUES (
+		#{feeId},
+		#{vehicleId},
+		#{entryAt,jdbcType=TIMESTAMP},
+		#{exitAt,jdbcType=TIMESTAMP},
+		#{useMinutes},
+		#{freeMinutes},
+		#{finalFeeYen}
+		)
+	</insert>
 
-  <select id="selectById" parameterType="long"
-          resultType="com.hwangjiho.parking.domain.ParkingFeeInfo">
-    SELECT
-      FEE_ID         AS feeId,
-      VEHICLE_ID     AS vehicleId,
-      ENTRY_AT       AS entryAt,
-      USE_MINUTES    AS useMinutes,
-      FREE_MINUTES   AS freeMinutes,
-      TOTAL_FEE      AS finalFeeYen,
-      EXIT_AT        AS exitAt      -- 도메인에 필드가 없으면 빼도 됩니다
-    FROM PARKING_FEE_INFO
-    WHERE FEE_ID = #{feeId}
-  </select>
+	<select id="selectById" parameterType="long"
+		resultMap="ParkingFeeInfoMap">
+		SELECT FEE_ID, VEHICLE_ID, ENTRY_AT, EXIT_AT, USE_MINUTES, FREE_MINUTES,
+		TOTAL_FEE
+		FROM PARKING_FEE_INFO
+		WHERE FEE_ID = #{feeId}
+	</select>
 
+	<select id="selectPendingById" parameterType="long"
+		resultMap="ParkingFeeInfoMap">
+		SELECT FEE_ID, VEHICLE_ID, ENTRY_AT, EXIT_AT, USE_MINUTES, FREE_MINUTES,
+		TOTAL_FEE
+		FROM PARKING_FEE_INFO
+		WHERE FEE_ID = #{feeId}
+	</select>
+
+	<!-- 11g 최신 1건: ROWNUM -->
+	<select id="selectLatestPendingByCarId" parameterType="long"
+		resultMap="ParkingFeeInfoMap">
+		SELECT * FROM (
+		SELECT FEE_ID, VEHICLE_ID, ENTRY_AT, EXIT_AT, USE_MINUTES, FREE_MINUTES,
+		TOTAL_FEE
+		FROM PARKING_FEE_INFO
+		WHERE VEHICLE_ID = #{carId}
+		ORDER BY FEE_ID DESC
+		) WHERE ROWNUM = 1
+	</select>
 </mapper>

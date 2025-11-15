@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>事前精算｜精算方法選択</title>
-
 <style>
 :root {
 	--bg: #fdf5e6;
@@ -17,13 +16,13 @@
 }
 
 * {
-	box-sizing: border-box;
+	box-sizing: border-box
 }
 
 html, body {
 	height: 100%;
 	margin: 0;
-	padding: 0;
+	padding: 0
 }
 
 body {
@@ -31,107 +30,122 @@ body {
 	color: var(--text);
 	font-family: 'Noto Sans JP', 'Malgun Gothic', sans-serif;
 	display: flex;
-	flex-direction: column;
+	flex-direction: column
 }
 
+/* Topbar */
 .topbar {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: 12px 20px;
 	background: var(--panel);
-	border-bottom: 2px solid var(--line);
+	border-bottom: 2px solid var(--line)
 }
 
 .title {
 	font-weight: 800;
 	text-align: center;
-	flex: 1;
+	flex: 1
 }
 
-.actions {
+.actions, .actions-left {
 	display: flex;
 	gap: 10px;
+	align-items: center
 }
 
 .link-btn {
 	border: 2px solid var(--line);
-	border-radius: 10px;
+	border-radius: 12px;
 	background: var(--bg);
 	color: var(--text);
 	font-weight: 700;
 	cursor: pointer;
-	padding: 8px 12px;
-	font-size: 13px;
+	padding: 10px 16px;
+	font-size: 16px
 }
 
 .link-btn:hover {
-	background: var(--hover);
+	background: var(--hover)
 }
 
+/* Layout 1:1 */
 .main-wrap {
 	flex: 1;
 	display: grid;
-	gap: 16px;
-	padding: 16px;
-	grid-template-columns: 1.1fr 0.9fr;
+	gap: 18px;
+	padding: 18px;
+	grid-template-columns: 1fr 1fr
 }
 
 @media ( max-width :980px) {
 	.main-wrap {
-		grid-template-columns: 1fr;
+		grid-template-columns: 1fr
 	}
 }
 
 .card {
 	background: var(--panel);
 	border: 2px solid var(--line);
-	border-radius: 12px;
-	padding: 20px;
-	box-shadow: 0 3px 8px rgba(0, 0, 0, .1);
+	border-radius: 16px;
+	padding: 22px;
+	box-shadow: 0 5px 12px rgba(0, 0, 0, .08)
 }
 
+/* Left */
 .left-box {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 16px;
+	gap: 16px
+}
+
+.left-box h2 {
+	margin: 0 0 8px;
+	font-size: clamp(22px, 2.6vw, 30px);
+	font-weight: 900;
+	letter-spacing: .02em
 }
 
 .toggle-row {
 	display: flex;
-	gap: 10px;
+	gap: 12px;
 	justify-content: center;
+	flex-wrap: wrap
 }
 
 .toggle-btn {
 	border: 2px solid var(--line);
-	border-radius: 10px;
+	border-radius: 14px;
 	background: var(--bg);
-	color: var(--text);
-	font-weight: 700;
-	padding: 10px 16px;
+	color: #222;
+	font-weight: 900;
+	padding: 14px 20px;
+	font-size: clamp(16px, 2vw, 22px);
 	cursor: pointer;
+	min-width: 150px
 }
 
 .toggle-btn.active {
 	background: var(--accent);
-	color: #fff;
+	color: #222;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, .08)
 }
 
 .ticket-box {
 	background: #fff;
 	border: 2px dashed var(--line);
-	border-radius: 12px;
-	width: 80%;
-	min-height: 120px;
+	border-radius: 16px;
+	width: min(96%, 760px);
+	min-height: 160px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 18px;
+	font-size: clamp(16px, 2vw, 22px);
 	color: var(--muted);
 	text-align: center;
-	padding: 12px;
+	padding: 14px
 }
 
 #spendArea {
@@ -140,116 +154,233 @@ body {
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	gap: 10px;
+	gap: 10px
 }
 
 .ticket-input {
-	font-size: 20px;
-	padding: 10px;
-	width: 80%;
+	font-size: clamp(18px, 2.2vw, 24px);
+	padding: 12px;
+	width: min(96%, 520px);
 	border: 2px solid var(--line);
-	border-radius: 8px;
-	text-align: right;
+	border-radius: 12px;
+	text-align: right
 }
 
 .ticket-input:disabled {
 	background: #f2f2f2;
 	color: #999;
-	cursor: not-allowed;
+	cursor: not-allowed
 }
 
 .input-hint {
-	font-size: 13px;
-	color: var(--muted);
+	font-size: clamp(14px, 1.6vw, 16px);
+	color: var(--muted)
 }
 
+.action-row {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	margin-top: 4px
+}
+
+.apply-btn {
+	border: 0;
+	border-radius: 14px;
+	background: var(--accent);
+	padding: 14px 24px;
+	font-weight: 900;
+	cursor: pointer;
+	font-size: clamp(18px, 2.4vw, 26px);
+	box-shadow: 0 5px 14px rgba(0, 0, 0, .15)
+}
+
+.apply-btn:active {
+	transform: translateY(1px)
+}
+
+/* Right */
 .fee-box {
 	font-size: 18px;
 	line-height: 1.8;
 	border: 2px solid var(--line);
-	border-radius: 12px;
+	border-radius: 16px;
 	background: #fff;
-	padding: 16px;
+	padding: 18px
 }
 
 .fee-box .row {
 	display: flex;
 	justify-content: space-between;
+	gap: 10px
 }
 
 .fee-box .label {
-	color: var(--muted);
+	color: var(--muted)
 }
 
 .fee-box .value {
-	font-weight: 700;
+	font-weight: 800
+}
+
+.fee-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+	margin-top: 10px
+}
+
+.fee-item {
+	border: 2px solid var(--line);
+	border-radius: 14px;
+	padding: 14px;
+	background: #fff
+}
+
+.fee-item h4 {
+	margin: 0 0 6px;
+	font-size: 16px
+}
+
+.amount {
+	font-weight: 900;
+	font-size: clamp(22px, 2.6vw, 28px)
+}
+
+.amount.small {
+	font-size: clamp(18px, 2.2vw, 22px)
+}
+
+.strike {
+	text-decoration: line-through;
+	color: #999;
+	margin-right: 8px
+}
+
+.cap-note {
+	color: var(--muted);
+	font-size: 14px;
+	margin-top: 6px;
+	text-align: right
+}
+
+.note {
+	margin-top: 10px;
+	color: var(--muted);
+	text-align: center;
+	font-size: 14px
 }
 
 .pay-grid {
-	display: flex;
+	display: none;
 	gap: 16px;
 	justify-content: center;
-	margin-top: 20px;
+	margin-top: 18px
 }
 
 .pay-btn {
-	width: 160px;
+	width: 190px;
 	padding: 18px 0;
-	font-size: 20px;
-	font-weight: 700;
+	font-size: 21px;
+	font-weight: 900;
 	border-radius: 12px;
 	border: 2px solid var(--line);
-	cursor: pointer;
+	cursor: pointer
 }
 
 .pay-btn--cash {
-	background: #ffe4b5;
+	background: #ffe4b5
 }
 
 .pay-btn--card {
-	background: #e6d690;
+	background: #e6d690
 }
 
-.hidden {
+/* 무료 자동 이동 안내 오버레이 */
+.free-overlay {
+	position: fixed;
+	inset: 0;
 	display: none;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, .35);
+	z-index: 9999;
+}
+
+.free-panel {
+	background: var(--panel);
+	border: 2px solid var(--line);
+	border-radius: 16px;
+	padding: 24px 28px;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+	text-align: center;
+	max-width: 520px;
+	width: 90%;
+}
+
+.free-panel .msg {
+	font-size: clamp(18px, 2.4vw, 26px);
+	font-weight: 900;
+	margin: 0 0 10px;
+}
+
+.free-panel .sub {
+	font-size: clamp(14px, 1.8vw, 18px);
+	color: var(--muted);
+	margin: 0;
+}
+
+.spinner {
+	width: 52px;
+	height: 52px;
+	border-radius: 50%;
+	border: 6px solid #eadfca;
+	border-top-color: var(--accent);
+	animation: spin 1s linear infinite;
+	margin: 14px auto
+}
+
+@keyframes spin {
+	to {transform: rotate(360deg)
+}
 }
 </style>
 </head>
 
 <body>
 	<div class="topbar">
-		<div class="actions">
-			<a href="/kiosk/step1" class="link-btn">🏠 ホーム</a>
+		<div class="actions-left">
+			<a href="/kiosk/step1" class="link-btn" id="btnHome">🏠 ホーム</a> <a
+				href="javascript:void(0)" class="link-btn" id="btnBack">← 戻る</a>
 		</div>
 		<div class="title">ご利用料金の精算</div>
 		<div class="actions">
-			<button class="link-btn">English</button>
+			<button class="link-btn" id="btnLang">English</button>
 		</div>
 	</div>
 
 	<main class="main-wrap">
+		<!-- Left: 서비스 등록 -->
 		<section class="card left-box">
-			<h2>サービス時間をご登録しますか？</h2>
-
+			<h2>サービス時間を登録しますか？</h2>
 			<div class="toggle-row">
 				<button type="button" id="btnHasSpend" class="toggle-btn active">支出あり</button>
 				<button type="button" id="btnNoSpend" class="toggle-btn">支出なし</button>
 			</div>
-
 			<div class="ticket-box" id="ticketBox">利用した店の総金額を入力してください</div>
-
-			<!-- spendArea는 항상 보이고, '支出なし'일 때 입력만 비활성화 -->
 			<div id="spendArea">
 				<input type="number" id="ticketInput" class="ticket-input"
 					placeholder="総金額 (¥)" min="0" step="100">
 				<div class="input-hint">※1000円ごとに1時間、500円以上で+30分無料</div>
-				<button type="button" class="toggle-btn active" id="btnApply">適用する</button>
+				<div class="action-row">
+					<button type="button" class="apply-btn" id="btnApply">適用する</button>
+				</div>
 			</div>
-
-			<div id="noSpendHint" class="note hidden">支出なしの場合、無料時間は 0分
-				となります。</div>
+			<div id="noSpendHint" class="input-hint" style="display: none;">支出なしの場合、無料時間は
+				0分 となります。</div>
 		</section>
 
+		<!-- Right: 요금 요약 -->
 		<section class="card right-box">
 			<div class="fee-box">
 				<div class="row">
@@ -264,24 +395,38 @@ body {
 							id="useMinutes" th:text="${useMinutes}" style="display: none;">150</span>
 					</div>
 				</div>
-				<div class="row">
-					<div class="label">無料駐車時間：</div>
-					<div class="value" id="freeTime">―</div>
-				</div>
-				<div class="row">
-					<div class="label">利用料金：</div>
-					<div class="value" id="totalFee">―</div>
+
+				<div class="fee-grid">
+					<div class="fee-item">
+						<h4>登録前の料金</h4>
+						<div class="amount" id="preAmount">―</div>
+						<div class="cap-note" id="preCapNote"></div>
+					</div>
+					<div class="fee-item">
+						<h4>無料駐車時間（登録）</h4>
+						<div class="amount small" id="freeAmount">0分</div>
+					</div>
+					<div class="fee-item" style="grid-column: 1/span 2;">
+						<h4>最終料金</h4>
+						<div class="amount">
+							<span class="strike" id="preStrike" style="display: none"></span>
+							<span id="finalAmount">―</span>
+						</div>
+						<div class="cap-note" id="finalCapNote"></div>
+					</div>
 				</div>
 			</div>
-
-			<div class="pay-grid" id="payGrid" style="display: none;">
-				<button class="pay-btn pay-btn--cash" onclick="goPay('cash')">現金</button>
-				<button class="pay-btn pay-btn--card" onclick="goPay('card')">カード</button>
+			<div class="note">※ 日・週・月の上限料金を超えないよう自動で調整されます。</div>
+			<div class="pay-grid" id="payGrid">
+				<button class="pay-btn pay-btn--cash" id="btnCash"
+					onclick="goPay('cash')">現金</button>
+				<button class="pay-btn pay-btn--card" id="btnCard"
+					onclick="goPay('card')">カード</button>
 			</div>
 		</section>
 	</main>
 
-	<!-- 0원(무료) 즉시 완료용: step5로 직행, DB엔 PAID/free로 저장 -->
+	<!-- 무료 직행 폼 -->
 	<form id="autoFreeForm" th:action="@{/kiosk/step5}" method="post"
 		style="display: none;">
 		<input type="hidden" name="carId" th:value="${carId}"> <input
@@ -298,7 +443,7 @@ body {
 			type="hidden" name="status" value="PAID">
 	</form>
 
-	<!-- 유료 결제 진행용: step4로 이동, DB엔 PENDING 저장 -->
+	<!-- 유료 진행 폼 -->
 	<form id="toStep4Form" th:action="@{/kiosk/step4}" method="post"
 		style="display: none;">
 		<input type="hidden" name="carId" th:value="${carId}"> <input
@@ -310,192 +455,220 @@ body {
 			type="hidden" name="rawFeeYen" id="rawFeeYen"> <input
 			type="hidden" name="discountFeeYen" id="discountFeeYen"> <input
 			type="hidden" name="cappedAtYen" id="cappedAtYen"> <input
-			type="hidden" name="finalFeeYen" id="finalFeeYen">
-
-		<!-- step4에서 총액만 별도로 쓰고 있으면 유지 -->
-		<input type="hidden" name="amountYen" id="amountYen4"> <input
+			type="hidden" name="finalFeeYen" id="finalFeeYen"> <input
+			type="hidden" name="amountYen" id="amountYen4"> <input
 			type="hidden" name="paymentMethod" id="payMethod"> <input
 			type="hidden" name="status" value="PENDING">
 	</form>
 
+	<!-- 무료 자동 이동 안내 오버레이 -->
+	<div class="free-overlay" id="freeOverlay" aria-live="assertive"
+		role="status">
+		<div class="free-panel">
+			<div class="spinner"></div>
+			<p class="msg" id="freeMsg">영수증 페이지로 이동하겠습니다.</p>
+			<p class="sub" id="freeSub">少々お待ちください…</p>
+		</div>
+	</div>
+
+	<!-- ... 위쪽 HTML/CSS는 그대로 ... -->
+
 	<script>
-  (function(){
-    const btnHasSpend = document.getElementById('btnHasSpend');
-    const btnNoSpend  = document.getElementById('btnNoSpend');
-    const ticketInput = document.getElementById('ticketInput');
-    const ticketBox   = document.getElementById('ticketBox');
-    const noSpendHint = document.getElementById('noSpendHint');
-    const freeTimeEl  = document.getElementById('freeTime');
-    const totalFeeEl  = document.getElementById('totalFee');
-    const useMinutesEl= document.getElementById('useMinutes');
-    const payGrid     = document.getElementById('payGrid');
-    const btnApply    = document.getElementById('btnApply');
+(function(){
+  const $ = (id)=>document.getElementById(id);
 
-    // step4 전송용 hidden
-    const useMinHidden   = document.getElementById('useMinutesHidden');
-    const freeMinHidden  = document.getElementById('freeMinutesHidden');
-    const spendYenHidden = document.getElementById('spendYen');
-    const rawFeeYenEl    = document.getElementById('rawFeeYen');
-    const discFeeYenEl   = document.getElementById('discountFeeYen');
-    const capYenEl       = document.getElementById('cappedAtYen');
-    const finalFeeYenEl  = document.getElementById('finalFeeYen');
-    const amountYen4     = document.getElementById('amountYen4');
-    const payMethod      = document.getElementById('payMethod');
+  const btnHasSpend=$('btnHasSpend'), btnNoSpend=$('btnNoSpend'), ticketInput=$('ticketInput');
+  const ticketBox=$('ticketBox'), noSpendHint=$('noSpendHint');
 
-    // step5(무료 직행) 전송용 hidden
-    const useMinAuto     = document.getElementById('useMinutesAuto');
-    const freeMinAuto    = document.getElementById('freeMinutesAuto');
-    const spendYenAuto   = document.getElementById('spendYenAuto');
-    const rawFeeAuto     = document.getElementById('rawFeeAuto');
-    const discFeeAuto    = document.getElementById('discountFeeAuto');
-    const capAuto        = document.getElementById('capAuto');
-    const finalFeeAuto   = document.getElementById('finalFeeAuto');
+  const useMinutesEl=$('useMinutes');
+  const preAmount=$('preAmount'), preCapNote=$('preCapNote');
+  const freeAmount=$('freeAmount'), preStrike=$('preStrike');
+  const finalAmount=$('finalAmount'), finalCapNote=$('finalCapNote');
+  const payGrid=$('payGrid'), btnApply=$('btnApply'), btnBack=$('btnBack');
 
-    const autoFreeForm   = document.getElementById('autoFreeForm');
-    const toStep4Form    = document.getElementById('toStep4Form');
+  // hidden
+  const useMinHidden=$('useMinutesHidden'), freeMinHidden=$('freeMinutesHidden');
+  const spendYenHidden=$('spendYen'), rawFeeYenEl=$('rawFeeYen');
+  const discFeeYenEl=$('discountFeeYen'), capYenEl=$('cappedAtYen');
+  const finalFeeYenEl=$('finalFeeYen'), amountYen4=$('amountYen4');   // ★ 최종요금 element
+  const freeMinAuto=$('freeMinutesAuto'), spendYenAuto=$('spendYenAuto');
+  const rawFeeAuto=$('rawFeeAuto'), discFeeAuto=$('discountFeeAuto');
+  const capAuto=$('capAuto'), finalFeeAuto=$('finalFeeAuto');
+  const autoFreeForm=$('autoFreeForm'), toStep4Form=$('toStep4Form');
 
-    const DAY_MIN=1440, WEEK_MIN=10080, MONTH_MIN=43200;
-    const CAP_DAY=1500, CAP_WEEK=4500, CAP_MONTH=7500;
+  // overlay
+  const freeOverlay=$('freeOverlay'), freeMsg=$('freeMsg'), freeSub=$('freeSub');
 
-    const useMinutes = parseInt((useMinutesEl.textContent||'0').trim(),10)||0;
+  const DAY_MIN=1440, WEEK_MIN=10080, MONTH_MIN=43200;
+  const CAP_DAY=1500, CAP_WEEK=4500, CAP_MONTH=7500;
 
-    let hasSpend = true, freeMinutes = 0, applied = false, payAmount = 0;
+  const useMinutes = parseInt((useMinutesEl?.textContent||'0').trim(),10)||0;
 
-    function rawFee(min){
-      if(min<=0) return 0;
-      if(min<=30) return 200;
-      if(min<=60) return 400;
-      return 400 + Math.ceil((min-60)/30)*150;
+  let hasSpend=true, freeMinutes=0, applied=false, submitting=false, redirectTimer=null;
+
+  function rawFee(min){
+    if(min<=0) return 0;
+    if(min<=30) return 200;
+    if(min<=60) return 400;
+    return 400 + Math.ceil((min-60)/30)*150;
+  }
+  function capAmountByUse(u){
+    if(u<=DAY_MIN) return CAP_DAY;
+    if(u<=WEEK_MIN) return CAP_WEEK;
+    return CAP_MONTH;
+  }
+  function finalAfterFree(useMin, freeMin){
+    const remain = Math.max(useMin - freeMin, 0);
+    const capped = capAmountByUse(useMin);
+    const pre    = Math.min(rawFee(useMin), capped);
+    const fin    = Math.min(rawFee(remain), capped);
+    return { remain, capped, pre, fin };
+  }
+
+  function showFreeOverlayAndSubmit(br){
+    if(submitting) return;
+    submitting = true;
+
+    // hidden 채우기
+    freeMinAuto.value  = freeMinutes;
+    spendYenAuto.value = hasSpend ? (parseInt(ticketInput.value||'0',10) || 0) : 0;
+    rawFeeAuto.value   = rawFee(useMinutes);
+    discFeeAuto.value  = rawFee(Math.min(freeMinutes, useMinutes));
+    capAuto.value      = br.capped;
+    finalFeeAuto.value = 0;
+
+    freeMsg.textContent = '영수증 페이지로 이동하겠습니다.';
+    freeSub.textContent = '少々お待ちください…';
+    freeOverlay.style.display = 'flex';
+
+    redirectTimer = setTimeout(()=>{ autoFreeForm.submit(); }, 2200);
+  }
+
+  function updateFareUI(){
+    const br = finalAfterFree(useMinutes, freeMinutes);
+
+    preAmount.textContent  = br.pre.toLocaleString('ja-JP') + '円';
+    preCapNote.textContent = (rawFee(useMinutes) > br.capped) ? `上限適用: ${br.capped.toLocaleString('ja-JP')}円` : '';
+
+    freeAmount.textContent = `${freeMinutes}分`;
+
+    if(applied && br.fin < br.pre){
+      preStrike.style.display='inline-block';
+      preStrike.textContent = br.pre.toLocaleString('ja-JP') + '円';
+      finalAmount.textContent = br.fin.toLocaleString('ja-JP') + '円';
+      finalCapNote.textContent= (rawFee(br.remain) > br.capped) ? `上限適用: ${br.capped.toLocaleString('ja-JP')}円` : '';
+    }else{
+      preStrike.style.display='none';
+      preStrike.textContent = '';
+      finalAmount.textContent = br.pre.toLocaleString('ja-JP') + '円';
+      finalCapNote.textContent= preCapNote.textContent;
     }
-    function capAmountByUse(u){
-      if(u<=DAY_MIN) return CAP_DAY;
-      if(u<=WEEK_MIN) return CAP_WEEK;
-      return CAP_MONTH;
-    }
-    function feeBreakdown(useMin, freeMin){
-      const full   = rawFee(useMin);
-      const free   = rawFee(freeMin);
-      const capped = capAmountByUse(useMin);
-      const final  = Math.min(Math.max(full - free, 0), capped);
-      return { full, free, capped, final };
-    }
-    function updateDisplay(){
-      if(!applied){
-        freeTimeEl.textContent='―';
-        totalFeeEl.textContent='―';
-        payGrid.style.display='none';
-        return;
+
+    // hidden 동기화
+    useMinHidden.value   = useMinutes;
+    freeMinHidden.value  = freeMinutes;
+    const spendVal = hasSpend ? Math.max(0, parseInt(ticketInput.value||'0',10) || 0) : 0;
+    spendYenHidden.value = spendVal;
+    rawFeeYenEl.value    = rawFee(useMinutes);
+    discFeeYenEl.value   = rawFee(Math.min(freeMinutes, useMinutes));
+    capYenEl.value       = br.capped;
+    finalFeeYenEl.value  = applied ? br.fin : br.pre;     // ★ 최종 요금
+    amountYen4.value     = finalFeeYenEl.value;           // ★ step4에 넘길 금액
+
+    if(applied){
+      if(br.fin <= 0){
+        payGrid.style.display = 'none';
+        showFreeOverlayAndSubmit(br);
+      }else{
+        if(redirectTimer){ clearTimeout(redirectTimer); redirectTimer=null; submitting=false; freeOverlay.style.display='none'; }
+        payGrid.style.display = 'flex';
       }
-      const br = feeBreakdown(useMinutes, freeMinutes);
-      freeTimeEl.textContent = `${freeMinutes}分`;
-      totalFeeEl.textContent = br.final.toLocaleString('ja-JP')+'円';
-      payGrid.style.display   = 'flex';
-      payAmount = br.final;
+    }else{
+      payGrid.style.display = 'none';
+      if(redirectTimer){ clearTimeout(redirectTimer); redirectTimer=null; submitting=false; freeOverlay.style.display='none'; }
     }
+  }
 
-    // 지출 여부 모드 전환
-    function setMode(on){
-      hasSpend = !!on;
-      applied = false;
-      freeMinutes = 0;
-      payAmount = 0;
+  function reflectToggleUI(){
+    btnHasSpend.classList.toggle('active', hasSpend);
+    btnNoSpend .classList.toggle('active', !hasSpend);
+  }
 
-      // 버튼 active 토글
-      btnHasSpend.classList.toggle('active', hasSpend);
-      btnNoSpend.classList.toggle('active', !hasSpend);
+  function setMode(on){
+    hasSpend = !!on;
+    applied = false;
+    freeMinutes = 0;
 
-      // 입력창 활성/비활성 및 placeholder
-      ticketInput.disabled = !hasSpend;
-      ticketInput.value = '';
-      ticketInput.placeholder = hasSpend ? '総金額 (¥)' : '支出なし のため入力不可';
-      ticketBox.textContent = hasSpend
-        ? '利用した店の総金額を入力してください'
-        : '支出なし（無料時間 0分）';
+    reflectToggleUI();
 
-      // 안내문 토글
-      noSpendHint.classList.toggle('hidden', hasSpend);
+    ticketInput.disabled = !hasSpend;
+    ticketInput.value = '';
+    ticketInput.placeholder = hasSpend ? '総金額 (¥)' : '支出なし のため入力不可';
+    ticketBox.textContent = hasSpend ? '利用した店の総金額을入力してください' : '支出なし（無料時間 0分）';
+    noSpendHint.style.display = hasSpend ? 'none' : 'block';
 
-      // 지출 있음이면 자동 포커스
-      if(hasSpend){
-        setTimeout(()=>ticketInput.focus(), 0);
-      }
+    updateFareUI();
 
-      updateDisplay();
+    if(hasSpend){
+      setTimeout(()=>ticketInput.focus(),0);
+    }else{
+      applySpend(true);
     }
+  }
 
-    // 무료시간 계산 후 표시
-    function applySpend(){
-      applied = true;
-      let yen = 0;
-      if(hasSpend){
-        yen = Math.max(0, parseInt(ticketInput.value||'0',10) || 0);
-      }
-      const calcFree = (amount)=>{
-        const hours = Math.floor(amount/1000)*60;
-        const half  = (amount%1000)>=500 ? 30 : 0;
-        return hours + half;
-      };
-      freeMinutes = hasSpend ? calcFree(yen) : 0;
-
-      ticketBox.textContent = hasSpend
-        ? `入力金額：¥${yen.toLocaleString('ja-JP')} → 無料時間 ${freeMinutes}分`
-        : '支出なし（無料時間 0分）';
-
-      updateDisplay();
+  function applySpend(forcedNoSpend=false){
+    applied = true;
+    let yen = 0;
+    if(hasSpend && !forcedNoSpend){
+      yen = Math.max(0, parseInt(ticketInput.value||'0',10) || 0);
     }
-
-    // 결제 진행
-    window.goPay = function(method){
-      if(!applied) return;
-
-      const spend = hasSpend ? (parseInt(ticketInput.value||'0',10)||0) : 0;
-      const br    = feeBreakdown(useMinutes, freeMinutes);
-
-      // 0원(무료)인 경우: step5로 직행 → DB에 PAID/free로 저장
-      if(br.final <= 0){
-        // 자동 폼 값 채움
-        freeMinAuto.value  = freeMinutes;
-        spendYenAuto.value = spend;
-        rawFeeAuto.value   = br.full;
-        discFeeAuto.value  = br.free;
-        capAuto.value      = br.capped;
-        finalFeeAuto.value = 0; // 명시
-        autoFreeForm.submit();
-        return;
-      }
-
-      // 유료 결제: step4로 이동 → DB에 PENDING 저장
-      // 상세값 채워 넣기
-      useMinHidden.value   = useMinutes;
-      freeMinHidden.value  = freeMinutes;
-      spendYenHidden.value = spend;
-      rawFeeYenEl.value    = br.full;
-      discFeeYenEl.value   = br.free;
-      capYenEl.value       = br.capped;
-      finalFeeYenEl.value  = br.final;
-
-      amountYen4.value     = br.final; // 호환 위해 유지
-      payMethod.value      = method;
-
-      toStep4Form.submit();
+    const calcFree = (amount)=>{
+      const hours = Math.floor(amount/1000)*60;
+      const half  = (amount%1000)>=500 ? 30 : 0;
+      return hours + half;
     };
+    freeMinutes = hasSpend ? calcFree(yen) : 0;
 
-    // 이벤트
-    btnHasSpend.addEventListener('click', ()=> setMode(true));
-    btnNoSpend .addEventListener('click', ()=> setMode(false));
-    btnApply   .addEventListener('click', applySpend);
+    ticketBox.textContent = hasSpend
+      ? `入力金額：¥${yen.toLocaleString('ja-JP')} → 無料時間 ${freeMinutes}分`
+      : '支出なし（無料時間 0分）';
 
-    // 입력창에서 Enter로도 적용
-    ticketInput.addEventListener('keydown', (e)=>{
-      if(e.key === 'Enter'){
-        e.preventDefault();
-        applySpend();
-      }
-    });
+    updateFareUI();
+  }
 
-    // 초기 상태: 지출 있음
-    setMode(true);
-  })();
-  </script>
+  // ★ 결제 버튼: 선택한 결제수단을 hidden에 정확히 넣어준다.
+  window.goPay = function(method){
+    if(submitting) return;
+    if(!applied) applySpend();
+
+    const final = parseInt(finalFeeYenEl.value || '0', 10);
+    if(final <= 0){ return; }
+
+    submitting = true;
+    document.getElementById('payMethod').value = method;  // ★ 'cash' 또는 'card'
+    toStep4Form.submit();
+  };
+
+  // 이벤트
+  btnHasSpend.addEventListener('click', ()=> setMode(true));
+  btnNoSpend .addEventListener('click',  ()=> setMode(false));
+  btnApply   .addEventListener('click',  ()=> applySpend());
+  ticketInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); applySpend(); } });
+
+  // ← step2
+  btnBack.onclick = ()=>{
+    if (document.referrer && /\/kiosk\/step2\b/.test(document.referrer) && history.length > 1) {
+      history.back(); return;
+    }
+    const plate = sessionStorage.getItem('plate');
+    if (plate) location.href = '/kiosk/step2?plate=' + encodeURIComponent(plate);
+    else location.href = '/kiosk/step2';
+  };
+
+  // 초기
+  reflectToggleUI();
+  updateFareUI();
+})();
+</script>
 </body>
 </html>

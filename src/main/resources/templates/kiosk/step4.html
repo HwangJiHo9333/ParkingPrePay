@@ -7,178 +7,415 @@
 
 <style>
 :root {
-  --bg:#fdf5e6; --panel:#fffaf0; --text:#444; --line:#d8c49b;
-  --accent:#d6b85a; --hover:#f8efd0; --muted:#666; --bad:#d9534f;
+	--bg: #fdf5e6;
+	--panel: #fffaf0;
+	--text: #444;
+	--line: #d8c49b;
+	--accent: #d6b85a;
+	--hover: #f8efd0;
+	--muted: #666;
+	--bad: #d9534f;
 }
-*{ box-sizing:border-box; }
-html,body{ height:100%; margin:0; padding:0; }
-body{ background:var(--bg); color:var(--text); font-family:'Noto Sans JP','Malgun Gothic',sans-serif; }
 
-/* 상단바 */
-.topbar{ display:flex; justify-content:space-between; align-items:center; padding:12px 20px; background:var(--panel); border-bottom:2px solid var(--line); }
-.link-btn{ border:2px solid var(--line); border-radius:10px; background:var(--bg); padding:8px 12px; font-weight:700; cursor:pointer; text-decoration:none; color:inherit; }
-.link-btn:hover{ background:var(--hover); }
-.title{ font-weight:800; }
+* {
+	box-sizing: border-box;
+}
 
-/* 레이아웃 */
-.main-wrap{ display:grid; gap:16px; padding:16px; grid-template-columns:1.1fr 0.9fr; }
-@media (max-width:980px){ .main-wrap{ grid-template-columns:1fr; } }
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: var(--bg);
+	color: var(--text);
+	font-family: 'Noto Sans JP', 'Malgun Gothic', sans-serif;
+	display: flex;
+	flex-direction: column;
+}
+
+/* Topbar */
+.topbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 20px;
+	background: var(--panel);
+	border-bottom: 2px solid var(--line);
+}
+
+.actions-left, .actions-right {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.link-btn {
+	border: 2px solid var(--line);
+	border-radius: 12px;
+	background: var(--bg);
+	padding: 10px 16px;
+	font-weight: 800;
+	cursor: pointer;
+	text-decoration: none;
+	color: inherit;
+	font-size: 16px;
+}
+
+.link-btn:hover {
+	background: var(--hover);
+}
+
+.title {
+	font-weight: 900;
+	font-size: clamp(18px, 2.2vw, 22px);
+	text-align: center;
+}
+
+/* Layout: 좌우 균등 */
+.main-wrap {
+	flex: 1;
+	display: grid;
+	gap: 18px;
+	padding: 18px;
+	grid-template-columns: 1fr 1fr;
+	align-items: stretch;
+	min-height: 0;
+}
+
+@media ( max-width : 980px) {
+	.main-wrap {
+		grid-template-columns: 1fr;
+	}
+}
 
 /* 카드 공통 */
-.card{ background:var(--panel); border:2px solid var(--line); border-radius:12px; padding:20px; box-shadow:0 3px 8px rgba(0,0,0,.1); }
+.card {
+	background: var(--panel);
+	border: 2px solid var(--line);
+	border-radius: 16px;
+	padding: 20px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
 
-/* 왼쪽 요약 */
-.summary h2{ margin:0 0 12px 0; text-align:center; }
-.fee-box{ font-size:18px; line-height:1.8; border:2px solid var(--line); border-radius:12px; background:#fff; padding:16px; }
-.fee-box .row{ display:flex; justify-content:space-between; gap:12px; }
-.fee-box .label{ color:var(--muted); }
-.fee-box .value{ font-weight:700; }
+/* 좌측 요약 */
+.summary h2 {
+	margin: 0 0 12px;
+	text-align: center;
+	font-size: clamp(20px, 2.4vw, 26px);
+	font-weight: 900;
+}
 
-/* 오른쪽 결제 */
-.pay h2{ margin:0 0 12px 0; text-align:center; }
-.amount{ font-size:28px; font-weight:800; text-align:center; margin:8px 0 16px; }
-.input-cash{ font-size:20px; text-align:right; padding:12px; width:100%; border:2px solid var(--line); border-radius:10px; }
-.bad-text{ color:var(--bad); font-size:15px; margin-top:8px; font-weight:700; text-align:center; }
-.k-btn{ border:2px solid var(--line); border-radius:10px; background:var(--accent); color:#fff; font-weight:700; padding:14px 18px; font-size:18px; cursor:pointer; width:100%; margin-top:16px; }
-.k-btn[disabled]{ opacity:.5; cursor:not-allowed; }
-.k-btn:hover:not([disabled]){ background:#caaa45; }
+.fee-box {
+	font-size: 18px;
+	line-height: 1.8;
+	border: 2px solid var(--line);
+	border-radius: 14px;
+	background: #fff;
+	padding: 16px;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	overflow: auto;
+}
 
-/* 카드 안내(좌측 메시지) */
-.card-ment{ font-size:16px; text-align:center; color:var(--muted); margin-top:8px; }
+.fee-box .row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+}
+
+.fee-box .label {
+	color: var(--muted);
+	font-weight: 700;
+}
+
+.fee-box .value {
+	font-weight: 900;
+}
+
+.card-ment {
+	font-size: 15px;
+	text-align: center;
+	color: var(--muted);
+	margin-top: 10px;
+}
+
+/* 우측 결제 */
+.pay h2 {
+	margin: 0 0 12px;
+	text-align: center;
+	font-size: clamp(20px, 2.4vw, 26px);
+	font-weight: 900;
+}
+
+.amount {
+	font-size: clamp(22px, 2.6vw, 28px);
+	font-weight: 900;
+	text-align: center;
+	margin: 0 0 14px;
+}
+
+.bad-text {
+	color: var(--bad);
+	font-size: clamp(14px, 1.8vw, 16px);
+	margin: 0 0 8px;
+	font-weight: 900;
+	text-align: center;
+	display: none;
+}
+
+.input-cash {
+	font-size: clamp(18px, 2.2vw, 22px);
+	text-align: right;
+	padding: 12px;
+	width: 100%;
+	border: 2px solid var(--line);
+	border-radius: 12px;
+	background: #fff;
+}
+
+.k-btn {
+	border: 2px solid var(--line);
+	border-radius: 12px;
+	background: var(--accent);
+	color: #fff;
+	font-weight: 900;
+	padding: 14px 18px;
+	font-size: clamp(18px, 2.2vw, 22px);
+	cursor: pointer;
+	width: 100%;
+	margin-top: 16px;
+}
+
+.k-btn[disabled] {
+	opacity: .5;
+	cursor: not-allowed;
+}
+
+.k-btn:hover:not([disabled]) {
+	background: #caaa45;
+}
 
 /* 카드 처리 애니메이션 */
-.process-box{ display:flex; flex-direction:column; align-items:center; gap:12px; }
-.spinner{
-  width:44px; height:44px; border-radius:50%;
-  border:4px solid #ddd; border-top-color: var(--accent);
-  animation: spin 1s linear infinite;
+.process-box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	margin-top: 8px;
 }
-@keyframes spin{ to{ transform: rotate(360deg); } }
-.proc-text{ color:var(--muted); font-weight:700; }
+
+.spinner {
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	border: 4px solid #ddd;
+	border-top-color: var(--accent);
+	animation: spin 1s linear infinite;
+}
+
+/* keyframes */
+@keyframes spin {to { transform:rotate(360deg);
+	
+}
+
+}
+.proc-text {
+	color: var(--muted);
+	font-weight: 700;
+}
 </style>
 </head>
 
 <body>
-<!-- 상단바: carId를 붙여 step3로 GET 이동 -->
-<div class="topbar">
-  <a class="link-btn" th:href="@{/kiosk/step3(carId=${carId})}">← 戻る</a>
-  <div class="title">お支払い</div>
-  <button class="link-btn">English</button>
-</div>
+	<!-- 상단바 -->
+	<div class="topbar">
+		<div class="actions-left">
+			<a class="link-btn" href="/kiosk/step1" id="btnHome">🏠 ホーム</a> <a
+				class="link-btn" th:href="@{/kiosk/step3(carId=${carId})}"
+				id="btnBack">← 戻る</a>
+		</div>
+		<div class="title" id="titleText">お支払い</div>
+		<div class="actions-right">
+			<button class="link-btn" id="btnLang">English</button>
+		</div>
+	</div>
 
-<!-- 메인 -->
-<main class="main-wrap">
-  <!-- 왼쪽: 요약 정보 (현금/카드 동일) -->
-  <section class="card summary">
-    <h2>ご利用内容</h2>
-    <div class="fee-box">
-      <div class="row">
-        <div class="label">入庫時刻：</div>
-        <div class="value" th:text="${entryTime}">2025-10-29 13:20</div>
-      </div>
-      <div class="row">
-        <div class="label">出庫時刻：</div>
-        <div class="value" th:text="${exitTime}">--:--</div>
-      </div>
-      <div class="row">
-        <div class="label">利用時間：</div>
-        <div class="value">
-          <span th:text="${useTime}">2時間30分</span>
-          <span id="useMinutes" th:text="${useMinutes}" style="display:none;">150</span>
-        </div>
-      </div>
-      <div class="row">
-        <div class="label">無料駐車時間：</div>
-        <div class="value" th:text="${freeTime != null} ? ${freeTime} : ${freeMinutes} + '分'">60分</div>
-      </div>
-      <div class="row">
-        <div class="label">利用料金：</div>
-        <div class="value">
-          <span id="needAmount" th:text="${totalFee}">0</span>円
-        </div>
-      </div>
-      <div class="row">
-        <div class="label">支払方法：</div>
-        <div class="value" th:text="${paymentMethod == 'cash' ? '現金' : 'カード'}">現金</div>
-      </div>
-    </div>
+	<!-- 메인 -->
+	<main class="main-wrap">
+		<!-- 왼쪽: 요약 -->
+		<section class="card summary">
+			<h2 id="hSummary">ご利用内容</h2>
+			<div class="fee-box">
+				<div class="row">
+					<div class="label" id="lblEntry">入庫時刻：</div>
+					<div class="value" id="valEntry" th:text="${entryTime}">2025-10-29
+						13:20</div>
+				</div>
+				<div class="row">
+					<div class="label" id="lblExit">出庫時刻：</div>
+					<div class="value" id="valExit" th:text="${exitTime}">2025-10-29
+						14:50</div>
+				</div>
+				<div class="row">
+					<div class="label" id="lblUse">利用時間：</div>
+					<div class="value">
+						<span id="valUseText" th:text="${useTime}">2時間30分</span> <span
+							id="useMinutes" th:text="${useMinutes}" style="display: none;">150</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="label" id="lblFree">無料駐車時間：</div>
+					<div class="value" id="valFree"
+						th:text="${freeTime != null} ? ${freeTime} : ${freeMinutes} + '分'">60分</div>
+				</div>
+				<div class="row">
+					<div class="label" id="lblTotal">利用料金：</div>
+					<div class="value">
+						<span id="needAmount" th:text="${totalFee}">0</span>円
+					</div>
+				</div>
+				<div class="row">
+					<div class="label" id="lblMethod">支払方法：</div>
+					<div class="value" id="valMethod"
+						th:text="${paymentMethod == 'cash' ? '現金' : 'カード'}">現金</div>
+				</div>
+			</div>
+			<div th:if="${paymentMethod == 'card'}" class="card-ment"
+				id="cardMent">カードを挿入し、案内に従ってください。</div>
+		</section>
 
-    <!-- 카드 선택 시 안내 -->
-    <div th:if="${paymentMethod == 'card'}" class="card-ment">
-      カードを挿入し、案内に従ってください。
-    </div>
-  </section>
+		<!-- 오른쪽: 결제 -->
+		<section class="card pay">
+			<h2 id="hPay"
+				th:text="${paymentMethod == 'card' ? 'カード決済' : '現金支払い'}">カード決済</h2>
+			<div class="amount" id="amtText">
+				お支払い金額：<span th:text="${totalFee}">0</span>円
+			</div>
 
-  <!-- 오른쪽: 결제 영역 -->
-  <section class="card pay">
-    <h2 th:text="${paymentMethod == 'card' ? 'カード決済' : '現金支払い'}">カード決済</h2>
+			<!-- 현금 결제 -->
+			<div id="cashArea" th:if="${paymentMethod == 'cash'}"
+				style="display: flex; flex-direction: column;">
+				<div id="cashWarning" class="bad-text">不足金額: 0円</div>
+				<input type="number" id="cashInput" class="input-cash"
+					placeholder="投入金額 (¥)" min="0" inputmode="numeric">
+				<button id="cashPayBtn" class="k-btn" disabled>支払う</button>
+			</div>
 
-    <!-- 현금 결제 화면 -->
-    <div id="cashArea" th:if="${paymentMethod == 'cash'}">
-      <div class="amount">お支払い金額：<span th:text="${totalFee}">0</span>円</div>
+			<!-- 카드 결제 -->
+			<div id="cardArea" th:if="${paymentMethod == 'card'}"
+				style="display: flex; flex-direction: column;">
+				<div id="cardProcess" class="process-box" style="display: none;">
+					<div class="spinner"></div>
+					<div class="proc-text" id="procText">カード情報を読み取っています…</div>
+				</div>
+				<button id="cardPayBtn" class="k-btn">支払う</button>
+			</div>
 
-      <input type="number" id="cashInput" class="input-cash" placeholder="投入金額 (¥)" min="0" inputmode="numeric">
-      <div id="cashWarning" class="bad-text" style="display:none;">不足金額: 0円</div>
+			<!-- Step5 이동용 폼 (★ tx 전달 포함 버전) -->
+			<form id="toStep5" th:action="@{/kiosk/step5}" method="post"
+				style="display: none;">
+				<input type="hidden" name="carId" th:value="${carId}"> <input
+					type="hidden" name="amountYen" th:value="${totalFee}"> <input
+					type="hidden" name="paymentMethod" th:value="${paymentMethod}">
+				<input type="hidden" name="tenderedYen" id="tenderedYen"> <input
+					type="hidden" name="changeYen" id="changeYen">
+				<!-- ★ tx 전달 (있을 때만) -->
+				<input type="hidden" name="tx" th:if="${tx != null}"
+					th:value="${tx}">
+			</form>
+		</section>
+	</main>
 
-      <button id="cashPayBtn" class="k-btn" disabled>支払う</button>
-    </div>
-
-    <!-- 카드 결제 화면 (현금 입력 없음) -->
-    <div id="cardArea" th:if="${paymentMethod == 'card'}">
-      <div class="amount">お支払い金額：<span th:text="${totalFee}">0</span>円</div>
-
-      <!-- 처리 애니메이션 박스 (버튼 클릭 시 표시) -->
-      <div id="cardProcess" class="process-box" style="display:none;">
-        <div class="spinner"></div>
-        <div class="proc-text" id="procText">カード情報を読み取っています…</div>
-      </div>
-
-      <button id="cardPayBtn" class="k-btn">支払う</button>
-    </div>
-
-    <!-- Step5 이동용 폼 -->
-    <form id="toStep5" th:action="@{/kiosk/step5}" method="post" style="display:none;">
-      <input type="hidden" name="carId" th:value="${carId}">
-      <input type="hidden" name="amountYen" th:value="${totalFee}">
-      <input type="hidden" name="paymentMethod" th:value="${paymentMethod}">
-      <!-- 현금일 때만 기록 -->
-      <input type="hidden" name="tenderedYen" id="tenderedYen">
-      <input type="hidden" name="changeYen" id="changeYen">
-    </form>
-  </section>
-</main>
-
-<script>
+	<script>
 (function(){
-  const needAmountEl = document.getElementById('needAmount');
-  const needAmount = parseInt(needAmountEl ? needAmountEl.textContent : '0', 10) || 0;
+  /* ===== i18n ===== */
+  let lang = localStorage.getItem('kiosk_lang') || 'ja';
+  const t = {
+    ja:{
+      title:'お支払い', home:'ホーム', back:'← 戻る', lang:'English',
+      hSummary:'ご利用内容', lblEntry:'入庫時刻：', lblExit:'出庫時刻：', lblUse:'利用時間：',
+      lblFree:'無料駐車時間：', lblTotal:'利用料金：', lblMethod:'支払方法：',
+      cardMent:'カードを挿入し、案内に従ってください。', hPayCash:'現金支払い', hPayCard:'カード決済',
+      amtPrefix:'お支払い金額：', cashPlaceholder:'投入金額 (¥)', pay:'支払う', lack:'不足金額: '
+    },
+    en:{
+      title:'Payment', home:'Home', back:'← Back', lang:'日本語',
+      hSummary:'Usage details', lblEntry:'Entry time:', lblExit:'Exit time:', lblUse:'Usage time:',
+      lblFree:'Free time:', lblTotal:'Amount due:', lblMethod:'Method:',
+      cardMent:'Insert card and follow the instructions.', hPayCash:'Cash payment', hPayCard:'Card payment',
+      amtPrefix:'Amount to pay: ', cashPlaceholder:'Cash inserted (¥)', pay:'Pay', lack:'Short: '
+    }
+  };
 
-  const form = document.getElementById('toStep5');
-  const tenderedYen = document.getElementById('tenderedYen');
-  const changeYen   = document.getElementById('changeYen');
+  function q(id){return document.getElementById(id);}
+  const btnLang=q('btnLang'), btnHome=q('btnHome'), btnBack=q('btnBack'), titleText=q('titleText');
+  const hSummary=q('hSummary'), hPay=q('hPay'), cardMent=q('cardMent'), amtText=q('amtText');
+  const lblEntry=q('lblEntry'), lblExit=q('lblExit'), lblUse=q('lblUse'), lblFree=q('lblFree'), lblTotal=q('lblTotal'), lblMethod=q('lblMethod');
+  const cashInput=q('cashInput'), cashPayBtn=q('cashPayBtn'), cashWarning=q('cashWarning');
 
-  // ===== 현금 결제 =====
-  const cashInput   = document.getElementById('cashInput');
-  const cashWarning = document.getElementById('cashWarning');
-  const cashPayBtn  = document.getElementById('cashPayBtn');
+  function applyLang(){
+    const L=t[lang];
+    titleText.textContent = L.title;
+    btnHome.textContent   = (lang==='ja'?'🏠 ':'') + L.home;
+    btnBack.textContent   = L.back;
+    btnLang.textContent   = L.lang;
+    if(hSummary) hSummary.textContent = L.hSummary;
+    if(lblEntry)  lblEntry.textContent = L.lblEntry;
+    if(lblExit)   lblExit.textContent  = L.lblExit;
+    if(lblUse)    lblUse.textContent   = L.lblUse;
+    if(lblFree)   lblFree.textContent  = L.lblFree;
+    if(lblTotal)  lblTotal.textContent = L.lblTotal;
+    if(lblMethod) lblMethod.textContent= L.lblMethod;
+    if(cardMent)  cardMent.textContent = L.cardMent;
+
+    const isCard = !!q('cardArea');
+    if(hPay) hPay.textContent = isCard ? L.hPayCard : L.hPayCash;
+
+    const needAmount = parseInt((q('needAmount')?.textContent || '0').replace(/,/g,''),10) || 0;
+    if(amtText){
+      const num = needAmount.toLocaleString('ja-JP');
+      amtText.innerHTML = `${L.amtPrefix}<span>${num}</span>円`;
+    }
+    if(cashInput) cashInput.placeholder = L.cashPlaceholder;
+    if(cashPayBtn) cashPayBtn.textContent = L.pay;
+
+    if(cashWarning && cashWarning.style.display!=='none'){
+      const diffTxt = cashWarning.textContent.replace(/^(.+?:\s*)/, '');
+      cashWarning.textContent = L.lack + diffTxt;
+    }
+  }
+  btnLang && (btnLang.onclick=()=>{ lang=(lang==='ja'?'en':'ja'); localStorage.setItem('kiosk_lang',lang); applyLang(); });
+
+  /* ===== 금액 로직 ===== */
+  const needAmountEl = q('needAmount');
+  const needAmount = parseInt(needAmountEl ? needAmountEl.textContent.replace(/,/g,'') : '0', 10) || 0;
+  const form = q('toStep5'), tenderedYen=q('tenderedYen'), changeYen=q('changeYen');
 
   if (cashInput){
+    cashWarning.style.display = 'none';
     const onCashInput = ()=>{
+      const L=t[lang];
       const inserted = parseInt(cashInput.value || '0', 10);
       const diff = needAmount - inserted;
-
       if(diff > 0){
         cashWarning.style.display = 'block';
-        cashWarning.textContent = `不足金額: ${diff.toLocaleString('ja-JP')}円`;
-        cashPayBtn.disabled = true;
+        cashWarning.textContent = `${L.lack}${diff.toLocaleString('ja-JP')}円`;
+        q('cashPayBtn').disabled = true;
       }else{
         cashWarning.style.display = 'none';
-        cashPayBtn.disabled = false;
+        q('cashPayBtn').disabled = false;
       }
     };
     cashInput.addEventListener('input', onCashInput);
-
-    cashPayBtn && cashPayBtn.addEventListener('click', ()=>{
+    q('cashPayBtn')?.addEventListener('click', ()=>{
       const inserted = parseInt(cashInput.value || '0', 10);
       if(inserted < needAmount) return;
       const change = inserted - needAmount;
@@ -188,36 +425,32 @@ body{ background:var(--bg); color:var(--text); font-family:'Noto Sans JP','Malgu
     });
   }
 
-  // ===== 카드 결제 =====
-  const cardPayBtn  = document.getElementById('cardPayBtn');
-  const cardProcess = document.getElementById('cardProcess');
-  const procText    = document.getElementById('procText');
-
+  const cardPayBtn  = q('cardPayBtn');
+  const cardProcess = q('cardProcess');
+  const procText    = q('procText');
   if (cardPayBtn){
     cardPayBtn.addEventListener('click', ()=>{
-      // 버튼 비활성화 & 처리 애니메이션 표시
       cardPayBtn.disabled = true;
       if(cardProcess) cardProcess.style.display = 'flex';
-
-      // 간단한 단계별 메시지 (시뮬레이션)
       let step = 0;
-      const steps = [
-        'カード情報を読み取っています…',
-        '決済を処理しています…',
-        '承認を確認しています…'
-      ];
+      const steps = ['カード情報を読み取っています…','決済を処理しています…','承認を確認しています…'];
       const interval = setInterval(()=>{
         step++;
-        if(step < steps.length){
-          procText.textContent = steps[step];
-        }else{
-          clearInterval(interval);
-          // 승인 완료 → step5 이동
-          form.submit();
-        }
-      }, 700); // 0.7초 간격으로 메시지 변경
+        if(step < steps.length){ procText.textContent = steps[step]; }
+        else{ clearInterval(interval); form.submit(); }
+      }, 700);
     });
   }
+
+  /* Back 버튼: step3로 */
+  btnBack.onclick = (e)=>{
+    if(document.referrer && /\/kiosk\/step3\b/.test(document.referrer) && history.length>1){
+      e.preventDefault();
+      history.back();
+    }
+  };
+
+  applyLang();
 })();
 </script>
 </body>

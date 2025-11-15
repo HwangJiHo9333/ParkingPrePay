@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>事前精算｜インターホン接続中</title>
+<style>
+:root {
+	--bg: #fdf5e6;
+	--panel: #fffaf0;
+	--text: #444;
+	--line: #d8c49b;
+	--accent: #d6b85a;
+	--muted: #666
+}
+
+* {
+	box-sizing: border-box
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0
+}
+
+body {
+	background: var(--bg);
+	color: var(--text);
+	font-family: 'Noto Sans JP', 'Malgun Gothic', sans-serif;
+	display: flex;
+	flex-direction: column
+}
+
+.topbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 20px;
+	background: var(--panel);
+	border-bottom: 2px solid var(--line)
+}
+
+.title {
+	font-weight: 800;
+	text-align: center;
+	flex: 1
+}
+
+.actions, .actions-left {
+	display: flex;
+	gap: 10px;
+	align-items: center
+}
+
+.link-btn {
+	border: 2px solid var(--line);
+	border-radius: 10px;
+	background: var(--bg);
+	color: var(--text);
+	font-weight: 700;
+	padding: 8px 12px;
+	font-size: 13px;
+	cursor: pointer
+}
+
+.main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	text-align: center
+}
+
+.h1 {
+	font-weight: 900;
+	font-size: clamp(22px, 3.2vw, 36px);
+	margin: 0 0 12px
+}
+
+.p {
+	font-size: clamp(16px, 2vw, 20px);
+	color: var(--muted);
+	margin: 0 0 18px
+}
+
+.p-2 {
+	font-size: clamp(16px, 2vw, 20px);
+	margin: 0
+}
+
+.spinner {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	border: 6px solid #e9dfc5;
+	border-top-color: var(--accent);
+	animation: spin 1s linear infinite;
+	margin: 18px auto
+}
+
+@keyframes spin {
+	to {transform: rotate(360deg)
+}
+}
+</style>
+</head>
+<body>
+	<div class="topbar">
+		<div class="actions-left">
+			<a href="/kiosk/step1" class="link-btn" id="btnHome">🏠 ホーム</a>
+			<!-- 돌아가기: 항상 "이전의 인터폰 연결 버튼 페이지"로 복귀 -->
+			<a href="javascript:void(0)" class="link-btn" id="btnBack">← 戻る</a>
+		</div>
+		<div class="title" id="titleText">インターホン接続</div>
+		<div class="actions">
+			<button type="button" class="link-btn" id="btnLang">English</button>
+		</div>
+	</div>
+
+	<div class="main">
+		<div class="spinner" id="spinner"></div>
+		<div class="h1" id="heading">インターホンに接続しています…</div>
+		<div class="p" id="sub1">しばらくお待ちください。</div>
+		<div class="p-2" id="sub2" style="display: none;">接続されました。係員が応答いたします。</div>
+	</div>
+
+	<script>
+  (function(){
+    let lang = localStorage.getItem('kiosk_lang') || 'ja';
+    const tTitle=document.getElementById('titleText');
+    const bLang=document.getElementById('btnLang');
+    const home=document.getElementById('btnHome');
+    const back=document.getElementById('btnBack');
+    const h=document.getElementById('heading'), s1=document.getElementById('sub1'), s2=document.getElementById('sub2');
+
+    const i18n = {
+      ja:{title:"インターホン接続", home:"ホーム", back:"← 戻る", lang:"English",
+          h:"インターホンに接続しています…", s1:"しばらくお待ちください。", s2:"接続されました。係員が応答いたします。"},
+      en:{title:"Intercom", home:"Home", back:"← Back", lang:"日本語",
+          h:"Connecting to intercom…", s1:"Please wait a moment.", s2:"Connected. An attendant will assist you shortly."}
+    };
+
+    function applyLang(){
+      const t=i18n[lang];
+      tTitle.textContent=t.title; home.textContent=t.home; back.textContent=t.back; bLang.textContent=t.lang;
+      h.textContent=t.h; s1.textContent=t.s1; s2.textContent=t.s2;
+    }
+
+    if(bLang){
+      bLang.onclick=()=>{ lang=(lang==='ja'?'en':'ja'); localStorage.setItem('kiosk_lang',lang); applyLang(); };
+    }
+
+    // ✅ ← 돌아가기: 가장 먼저 '바로 전 페이지'로(plate 파라미터 유지),
+    //    없으면 sessionStorage의 plate로 step2 복구, 그래도 없으면 step1.
+    back.onclick = () => {
+      if (document.referrer && /\/kiosk\/step2\b/.test(document.referrer) && history.length > 1) {
+        history.back();
+        return;
+      }
+      const plate = sessionStorage.getItem('plate');
+      if (plate) {
+        window.location.href = '/kiosk/step2?plate=' + encodeURIComponent(plate);
+      } else {
+        window.location.href = '/kiosk/step1';
+      }
+    };
+
+    // 2.5초 후 연결 메시지 노출
+    setTimeout(()=>{ s2.style.display='block'; }, 2500);
+
+    applyLang();
+  })();
+  </script>
+</body>
+</html>

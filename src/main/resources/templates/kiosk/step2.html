@@ -4,26 +4,25 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>事前精算｜車両確認</title>
-
 <style>
 :root {
-	--bg: #fdf5e6; /* 밝은 베이지 */
-	--panel: #fffaf0; /* 카드 배경 */
-	--text: #444; /* 어두운 텍스트 */
+	--bg: #fdf5e6;
+	--panel: #fffaf0;
+	--text: #444;
 	--line: #d8c49b;
-	--accent: #d6b85a; /* 강조색 */
+	--accent: #d6b85a;
 	--hover: #f8efd0;
 	--muted: #666;
 }
 
 * {
-	box-sizing: border-box;
+	box-sizing: border-box
 }
 
 html, body {
 	height: 100%;
 	margin: 0;
-	padding: 0;
+	padding: 0
 }
 
 body {
@@ -31,31 +30,31 @@ body {
 	color: var(--text);
 	font-family: 'Noto Sans JP', 'Malgun Gothic', sans-serif;
 	display: flex;
-	flex-direction: column;
+	flex-direction: column
 }
 
-/* 상단바 */
+/* Topbar */
 .topbar {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: 12px 20px;
 	background: var(--panel);
-	border-bottom: 2px solid var(--line);
+	border-bottom: 2px solid var(--line)
 }
 
 .title {
 	font-weight: 800;
 	text-align: center;
-	flex: 1;
+	flex: 1
 }
 
-.actions {
+.actions, .actions-left {
 	display: flex;
 	gap: 10px;
+	align-items: center
 }
 
-/* 버튼 */
 .link-btn, .k-btn {
 	border: 2px solid var(--line);
 	border-radius: 10px;
@@ -63,101 +62,277 @@ body {
 	color: var(--text);
 	font-weight: 700;
 	cursor: pointer;
-	transition: background .2s ease, transform .05s ease;
+	transition: background .2s ease, transform .05s ease
 }
 
 .link-btn:hover, .k-btn:hover {
-	background: var(--hover);
+	background: var(--hover)
 }
 
 .link-btn {
-	padding: 8px 12px;
-	font-size: 13px;
+	padding: 10px 14px;
+	font-size: 15px
 }
 
 .k-btn {
-	padding: 12px 28px;
-	font-size: 18px;
+	padding: 16px 36px;
+	font-size: 20px
 }
 
 .k-btn:active {
-	transform: translateY(1px);
+	transform: translateY(1px)
 }
 
-/* 메인 컨테이너 */
+/* Main */
 .main-wrap {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: flex-start;
-	padding: 24px;
+	padding: 24px
 }
 
 h2 {
-	margin-top: 0;
+	margin: 0 0 16px
 }
 
-/* 카드 그리드 */
+.center-title {
+	text-align: center
+}
+
+/* ── 여러대(2+) ── */
 .card-grid {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 30px;
-	margin-top: 20px;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(360px, 1fr));
+	gap: 32px;
+	width: 100%;
+	max-width: 1180px;
+	margin-top: 16px
 }
 
 .card {
-	width: 260px;
+	width: 100%;
 	background: var(--panel);
 	border: 2px solid var(--line);
-	border-radius: 12px;
+	border-radius: 16px;
 	text-align: center;
-	box-shadow: 0 3px 8px rgba(0, 0, 0, .1);
-	transition: transform .1s ease;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, .1);
+	transition: transform .1s ease, background .2s ease
 }
 
 .card:hover {
 	transform: translateY(-3px);
-	background: var(--hover);
+	background: var(--hover)
 }
 
 .thumb img {
 	width: 100%;
-	height: 160px;
+	height: 240px;
 	object-fit: cover;
-	border-radius: 10px 10px 0 0;
+	border-radius: 14px 14px 0 0
 }
 
 .info {
-	padding: 10px 0;
+	padding: 14px 12px 6px
 }
 
 .info h3 {
-	margin: 8px 0 4px;
-	font-size: 18px;
+	margin: 6px 0 4px;
+	font-size: 22px
 }
 
 .info .muted {
 	color: var(--muted);
-	font-size: 14px;
+	font-size: 15px
 }
 
-/* 하단 버튼 영역 */
-.bottom-actions {
-	margin-top: 40px;
+.card .cta {
+	padding: 18px 16px 22px
+}
+
+/* ── 한대(1) ── */
+.single-wrap {
+	width: 100%;
+	max-width: 900px;
+	margin-top: 16px;
 	display: flex;
-	gap: 20px;
+	flex-direction: column;
+	align-items: center
+}
+
+.card-large {
+	width: 100%;
+	background: var(--panel);
+	border: 3px solid var(--line);
+	border-radius: 20px;
+	text-align: center;
+	box-shadow: 0 8px 18px rgba(0, 0, 0, .12);
+	transition: transform .1s ease, background .2s ease
+}
+
+.card-large:hover {
+	transform: translateY(-2px);
+	background: var(--hover)
+}
+
+.card-large .thumb img {
+	width: 100%;
+	height: 360px;
+	object-fit: cover;
+	border-radius: 18px 18px 0 0
+}
+
+.card-large .info {
+	padding: 18px 16px 8px
+}
+
+.card-large .info h3 {
+	margin: 8px 0 6px;
+	font-size: 26px
+}
+
+.card-large .info .muted {
+	font-size: 16px;
+	color: var(--muted)
+}
+
+.card-large .cta {
+	padding: 20px 18px 24px
+}
+
+.card-large .k-btn {
+	padding: 18px 42px;
+	font-size: 22px
+}
+
+/* ── 없음(0) : 히어로형 크게 ── */
+.empty-hero {
+	width: 100%;
+	max-width: 1280px;
+	min-height: clamp(520px, 70vh, 820px);
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	align-items: center;
+	justify-items: center;
+	gap: 18px;
+	margin-top: 8px;
+}
+
+.empty-title {
+	text-align: center;
+	font-weight: 900;
+	/* 더 크게 */
+	font-size: clamp(26px, 3.4vw, 40px);
+	margin: 0;
+}
+
+.call-panel {
+	width: min(100%, 1100px);
+	background: var(--panel);
+	border: 4px solid var(--line);
+	border-radius: 22px;
+	padding: clamp(18px, 3vw, 32px);
+	box-shadow: 0 10px 24px rgba(0, 0, 0, .12);
+}
+
+.call-list {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: clamp(12px, 2.2vw, 20px);
+	margin-top: 10px;
+}
+
+.call-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	border: 3px dashed var(--line);
+	border-radius: 16px;
+	background: #fff;
+	padding: clamp(14px, 2.4vw, 22px);
+}
+
+.call-label {
+	font-weight: 900;
+	font-size: clamp(20px, 2.2vw, 28px);
+}
+
+.call-value {
+	font-weight: 900;
+	font-size: clamp(22px, 2.6vw, 32px);
+	color: #222;
+	letter-spacing: .02em;
+}
+
+.call-value::before {
+	content: "（";
+}
+
+.call-value::after {
+	content: "）";
+}
+
+.call-help {
+	margin-top: clamp(10px, 1.6vw, 16px);
+	color: var(--muted);
+	text-align: center;
+	font-size: clamp(14px, 1.4vw, 18px);
+}
+
+/* 버튼을 더 크게, 눈에 띄게 */
+.intercom-cta {
+	display: flex;
 	justify-content: center;
+	margin-top: clamp(14px, 2vw, 22px)
+}
+
+.intercom-btn {
+	border: 0;
+	background: var(--accent);
+	color: #222;
+	font-weight: 900;
+	border-radius: 16px;
+	padding: clamp(16px, 2.6vw, 28px) clamp(28px, 4vw, 44px);
+	font-size: clamp(20px, 2.4vw, 28px);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, .18);
+	cursor: pointer;
+}
+
+.intercom-btn:hover {
+	filter: brightness(1.03)
+}
+
+.intercom-btn:active {
+	transform: translateY(1px)
+}
+
+/* Responsive */
+@media ( max-width :960px) {
+	.card-grid {
+		grid-template-columns: 1fr;
+		max-width: 560px
+	}
+	.single-wrap {
+		max-width: 94%
+	}
+	.empty-hero {
+		min-height: auto;
+		padding-bottom: 8px;
+	}
+	.call-panel {
+		width: 94%
+	}
 }
 </style>
 </head>
-
 <body>
-	<!-- 상단바 -->
+	<!-- Topbar -->
 	<div class="topbar">
-		<div class="actions">
-			<a href="/kiosk/step1" class="link-btn" id="btnHome">🏠 ホーム</a>
+		<div class="actions-left">
+			<a href="/kiosk/step1" class="link-btn" id="btnHome">🏠 ホーム</a> <a
+				href="/kiosk/step1" class="link-btn" id="btnBack">← 戻る</a>
 		</div>
 		<div class="title" id="titleText">車両を選択してください。</div>
 		<div class="actions">
@@ -165,14 +340,12 @@ h2 {
 		</div>
 	</div>
 
-	<!-- 메인 -->
 	<main class="main-wrap">
-		<h2 id="subTitle">以下の車両が見つかりました</h2>
-
-		<!-- 후보 차량 리스트 -->
-		<div class="card-grid">
-			<!-- Thymeleaf 반복 -->
-			<div class="card" th:each="car : ${candidates}">
+		<!-- 1대 -->
+		<div th:if="${candidates != null and #lists.size(candidates) == 1}"
+			class="single-wrap" th:with="car=${candidates[0]}">
+			<h2 id="subTitle" class="center-title">以下の車両が見つかりました</h2>
+			<div class="card-large">
 				<div class="thumb">
 					<img
 						th:src="${car.imageUrl != null ? car.imageUrl : '/images/noimage.png'}"
@@ -181,59 +354,126 @@ h2 {
 				<div class="info">
 					<h3 th:text="${car.plate}">品川 300 あ 12-34</h3>
 					<div class="muted"
-						th:text="${#temporals.format(car.entryAt, 'yyyy-MM-dd HH:mm')}">2025-10-29
+						th:text="${#temporals.format(car.entryAt,'yyyy-MM-dd HH:mm')}">2025-10-29
 						13:20</div>
 				</div>
-				<div style="padding: 12px;">
-					<!-- ✅ 수정된 폼 -->
-					<!-- ✅ 카드마다 폼 수정 -->
+				<div class="cta">
 					<form th:action="@{/kiosk/step3}" method="get">
-						<input type="hidden" name="carId" th:value="${car.id}" />
-						<button type="submit" class="k-btn">この車を選択</button>
+						<input type="hidden" name="carId" th:value="${car.id}">
+						<button type="submit" class="k-btn" data-role="select">この車を選択</button>
 					</form>
 				</div>
 			</div>
 		</div>
 
-		<!-- 하단 버튼 -->
-		<div class="bottom-actions">
-			<button class="k-btn" onclick="goBack()">戻る</button>
+		<!-- 2대 이상 -->
+		<div th:if="${candidates != null and #lists.size(candidates) > 1}">
+			<h2 id="subTitle" class="center-title">以下の車両が見つかりました</h2>
+			<div class="card-grid">
+				<div class="card" th:each="car,iter : ${candidates}"
+					th:if="${iter.index} < 4">
+					<div class="thumb">
+						<img
+							th:src="${car.imageUrl != null ? car.imageUrl : '/images/noimage.png'}"
+							alt="車両画像">
+					</div>
+					<div class="info">
+						<h3 th:text="${car.plate}">品川 300 あ 12-34</h3>
+						<div class="muted"
+							th:text="${#temporals.format(car.entryAt,'yyyy-MM-dd HH:mm')}">2025-10-29
+							13:20</div>
+					</div>
+					<div class="cta">
+						<form th:action="@{/kiosk/step3}" method="get">
+							<input type="hidden" name="carId" th:value="${car.id}">
+							<button type="submit" class="k-btn" data-role="select">この車を選択</button>
+						</form>
+					</div>
+				</div>
+			</div>
 		</div>
+
+		<!-- 0대 : 인터폰 연결 페이지 크게 -->
+		<div th:if="${candidates != null and #lists.isEmpty(candidates)}"
+			class="empty-hero">
+			<h2 id="subTitle" class="empty-title">該当する車両が見つかりませんでした</h2>
+
+			<div class="call-panel">
+				<div class="call-list">
+					<div class="call-item">
+						<div class="call-label" id="labelCS">お客様センター</div>
+						<div class="call-value" id="valCS">0120-123-456</div>
+					</div>
+					<div class="call-item">
+						<div class="call-label" id="labelOffice">管理室</div>
+						<div class="call-value" id="valOffice">03-1234-5678</div>
+					</div>
+				</div>
+
+				<div class="intercom-cta">
+					<button class="intercom-btn" id="btnIntercom">自動でインターホンに接続</button>
+				</div>
+
+				<div class="call-help" id="helpMsg">※
+					接続ボタンを押すと、次の画面にて接続メッセージが表示されます。</div>
+			</div>
+		</div>
+
+		<!-- candidates == null -->
+		<p th:if="${candidates == null}" class="center-title"
+			style="margin-top: 20px; color: #666;">
+			データの取得に失敗しました。もう一度お試しください。</p>
 	</main>
 
 	<script>
-(function(){
-  let lang=localStorage.getItem('kiosk_lang')||'ja';
-  const tText=document.getElementById('titleText');
-  const sTitle=document.getElementById('subTitle');
-  const bLang=document.getElementById('btnLang');
-  const bHome=document.getElementById('btnHome');
+  (function(){
+    let lang = localStorage.getItem('kiosk_lang') || 'ja';
+    const tText = document.getElementById('titleText');
+    const sTitle = document.getElementById('subTitle');
+    const bLang  = document.getElementById('btnLang');
+    const bHome  = document.getElementById('btnHome');
+    const bBack  = document.getElementById('btnBack');
+    const btnInter = document.getElementById('btnIntercom');
+    const labelCS = document.getElementById('labelCS');
+    const labelOffice = document.getElementById('labelOffice');
+    const helpMsg = document.getElementById('helpMsg');
 
-  const i18n={
-    ja:{title:"車両を選択してください。",sub:"以下の車両が見つかりました",
-        home:"ホーム",langToggle:"English",select:"この車を選択",back:"戻る"},
-    en:{title:"Select your vehicle.",sub:"The following vehicles were found:",
-        home:"Home",langToggle:"日本語",select:"Select this car",back:"Back"}
-  };
+    // step2 들어올 때 plate를 저장해 두면 interphone에서 복귀시 사용 가능
+    const params = new URLSearchParams(location.search);
+    const plate = params.get('plate');
+    if (plate) sessionStorage.setItem('plate', plate);
 
-  function applyLang(){
-    const t=i18n[lang];
-    tText.textContent=t.title;
-    sTitle.textContent=t.sub;
-    bHome.textContent=t.home;
-    bLang.textContent=t.langToggle;
+    const i18n = {
+      ja:{title:"車両を選択してください。", sub1:"以下の車両が見つかりました", sub0:"該当する車両が見つかりませんでした",
+          home:"ホーム", back:"← 戻る", langToggle:"English", select:"この車を選択",
+          cs:"お客様センター", office:"管理室", inter:"自動でインターホンに接続", help:"※ 接続ボタンを押すと、次の画面にて接続メッセージが表示されます。"},
+      en:{title:"Select your vehicle.", sub1:"The following vehicles were found:", sub0:"No matching vehicles were found.",
+          home:"Home", back:"← Back", langToggle:"日本語", select:"Select this car",
+          cs:"Customer Center", office:"Parking Office", inter:"Connect to Intercom Automatically", help:"* After pressing, you'll see a connection message on the next screen."}
+    };
 
-    // 카드 내 버튼 텍스트 변경
-    document.querySelectorAll('.k-btn').forEach(btn=>{
-      if(btn.textContent.includes("選択")||btn.textContent.includes("Select")) btn.textContent=t.select;
-      if(btn.textContent.includes("戻")||btn.textContent.includes("Back")) btn.textContent=t.back;
-    });
-  }
-  bLang.onclick=()=>{ lang=(lang==='ja'?'en':'ja'); localStorage.setItem('kiosk_lang',lang); applyLang(); };
-  applyLang();
-})();
+    function applyLang(){
+      const t = i18n[lang];
+      tText.textContent = t.title;
+      if (sTitle) {
+        const isEmptyView = document.querySelector('.empty-hero') !== null;
+        sTitle.textContent = isEmptyView ? t.sub0 : t.sub1;
+      }
+      bHome.textContent  = t.home;
+      bBack.textContent  = t.back;
+      bLang.textContent  = t.langToggle;
+      document.querySelectorAll('[data-role="select"]').forEach(btn=> btn.textContent = t.select);
+      if(labelCS) labelCS.textContent = t.cs;
+      if(labelOffice) labelOffice.textContent = t.office;
+      if(btnInter) btnInter.textContent = t.inter;
+      if(helpMsg) helpMsg.textContent = t.help;
+    }
 
-function goBack(){ window.location.href='/kiosk/step1'; }
-</script>
+    if(bLang){ bLang.onclick = ()=>{ lang=(lang==='ja'?'en':'ja'); localStorage.setItem('kiosk_lang',lang); applyLang(); }; }
+    if(btnInter){ btnInter.onclick = ()=>{ window.location.href = '/kiosk/interphone'; }; }
+
+    applyLang();
+  })();
+  </script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+// com.hwangjiho.parking.service.KioskService
 package com.hwangjiho.parking.service;
 
 import com.hwangjiho.parking.domain.ParkingFeeInfo;
@@ -17,14 +18,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class KioskService {
 
-    private final VehicleEntryMapper vehicleEntryMapper;   // 기존 후보 조회용
-    private final ParkingFeeInfoMapper feeInfoMapper;      // 정산 저장/조회용
+    private final VehicleEntryMapper vehicleEntryMapper;
+    private final ParkingFeeInfoMapper feeInfoMapper;
 
-    // ----------------------------
-    // 1) Step1 후보 조회 로직 (기존 그대로)
-    // ----------------------------
-    // step1에서 넘어온 완전 문자열(예: "品川 300 あ 12-34")을 그대로 먼저 시도,
-    // 없으면 마지막 4자리로 fallback
+    /* step1 후보 */
     public List<Candidate> getCandidates(String plateFromStep1, int limit) {
         List<Candidate> full = vehicleEntryMapper.findByFullPlate(plateFromStep1, limit);
         if (!full.isEmpty()) return full;
@@ -41,53 +38,49 @@ public class KioskService {
         return digitsOnly.substring(digitsOnly.length() - 4);
     }
 
-    // ----------------------------
-    // 2) Step3 → Step4: PENDING 저장
-    // ----------------------------
+    /* step3 → step4 : PENDING 저장 */
     public ParkingFeeInfo savePendingFee(FeeForm f) {
         ParkingFeeInfo e = new ParkingFeeInfo();
         e.setVehicleId(f.getCarId());
         e.setEntryAt(parseToLdt(f.getEntryAt()));
 
+        // ★ DB insert 시 null 저장을 허용
+        e.setExitAt(null);
+
         e.setUseMinutes(nz(f.getUseMinutes()));
         e.setFreeMinutes(nz(f.getFreeMinutes()));
-        e.setSpendYen(nz(f.getSpendYen()));
 
-        e.setRawFeeYen(nz(f.getRawFeeYen()));
-        e.setDiscountFeeYen(nz(f.getDiscountFeeYen()));
-        e.setCappedAtYen(nz(f.getCappedAtYen()));
-
-        // 최종 결제금액: finalFeeYen 우선, 없으면 amountYen(호환)
-        Integer finalFee = f.getFinalFeeYen() != null ? f.getFinalFeeYen() : f.getAmountYen();
+        // TOTAL_FEE 컬럼 = finalFeeYen
+        Integer finalFee = (f.getFinalFeeYen() != null ? f.getFinalFeeYen() : f.getAmountYen());
         e.setFinalFeeYen(nz(finalFee));
 
-        e.setPaymentMethod(f.getPaymentMethod()); // "cash" | "card" | "free"
-        e.setStatus("PENDING");
+        // ★ 결제수단 보존 (DB 컬럼이 없어도 컨트롤러에서 복구에 사용됨)
+        e.setPaymentMethod(f.getPaymentMethod());
 
-        feeInfoMapper.insertPending(e); // Oracle selectKey로 feeId 채워짐
+        feeInfoMapper.insertPending(e); // SEQ_PARKING_FEE로 feeId 생성
         return e;
     }
 
-    // ----------------------------
-    // 3) Step4 → Step5: 결제 완료 처리
-    // ----------------------------
-    public void markPaid(Long feeId, String txnId) {
-        feeInfoMapper.markPaid(feeId, txnId);
-    }
-
-    // ----------------------------
-    // 4) 정산 단건 조회 (step4/5 화면 표시 등)
-    // ----------------------------
+    /* 단건 조회 (step4, step5용) */
     public ParkingFeeInfo getFee(Long feeId) {
         return feeInfoMapper.selectById(feeId);
     }
 
-    // ----------------------------
-    // helpers
-    // ----------------------------
+    /* 뒤로가기 복구용 */
+    public ParkingFeeInfo findPendingById(Long id) {
+        ParkingFeeInfo r = feeInfoMapper.selectPendingById(id);
+        return (r != null) ? r : feeInfoMapper.selectById(id);
+    }
+
+    /* 최신 1건 조회 (Oracle 11g ROWNUM 사용) */
+    public ParkingFeeInfo findLatestPendingByCarId(Long carId) {
+        return feeInfoMapper.selectLatestPendingByCarId(carId);
+    }
+
+    /* ===== helpers ===== */
     private LocalDateTime parseToLdt(String s) {
         if (s == null || s.isBlank()) return null;
-        DateTimeFormatter[] fmts = new DateTimeFormatter[] {
+        DateTimeFormatter[] fmts = new DateTimeFormatter[]{
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"),
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         };
@@ -95,9 +88,10 @@ public class KioskService {
             try { return LocalDateTime.parse(s, fmt); }
             catch (DateTimeParseException ignore) {}
         }
-        // 포맷이 맞지 않으면 현재시각으로 대체 (필요 시 예외로 변경)
         return LocalDateTime.now();
     }
 
-    private int nz(Integer i){ return i == null ? 0 : i; }
+    private int nz(Integer i){
+        return (i == null ? 0 : i);
+    }
 }
